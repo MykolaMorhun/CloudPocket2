@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Welcome to Cloud Pocket</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favlogo.png}" sizes="32x32"/>
+
+    <script th:src="@{/lib/jquery-2.2.2.min.js}"></script>
+
+    <link th:href="@{/lib/bootstrap-3.3.6-dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <script th:src="@{/lib/bootstrap-3.3.6-dist/js/bootstrap.min.js}"></script>
+
+    <link th:href="@{/css/default.css}" rel="stylesheet"/>
+</head>
+<body>
+    <div th:replace="/snippets/banner"></div>
+    <h1>MAIN</h1>
+    <p>
+        Cloud Pocket is service for store your files.<br/>
+        Access your files from everywhere!
+    </p>
+</body>
+</html>
