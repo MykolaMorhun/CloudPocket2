@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class EntryController {
     @RequestMapping("/")
     public String redirectToMainPage() {
-        return "redirect:/main";
+        return "redirect:/home";
     }
 
-    @RequestMapping("/main")
+    @RequestMapping("/home")
     public String getMainPage() {
-        return "main";
+        return "home";
     }
 
     @RequestMapping("/info")
