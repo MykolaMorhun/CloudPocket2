@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+</head>
+<body>
+<div th:fragment="menu" class="navbar navbar-default">
+    <script th:src="@{/scripts/welcome_menu.js}"/>
+    <div class="container">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <img src="/images/logo.png" class="pull-left" height="35" style="margin: 5px;"/>
+                <a class="navbar-brand" href="#">Cloud Pocket</a>
+            </div>
+            <div class="collapse navbar-collapse" id="welcome-menu-navbar">
+                <ul class="nav navbar-nav">
+                    <li id="home"><a href="/home">Home</a></li>
+                    <li id="info"><a href="/info">Info</a></li>
+                    <li id="register"><a href="/register">Register</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li id="login"><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
