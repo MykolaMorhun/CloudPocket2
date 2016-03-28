@@ -1,0 +1,38 @@
+/* !important uses for override bootstrap styles only */
+
+.form {
+    background-color: rgba(0, 0, 0, 0.65);
+    padding: 50px;
+    border: 2px solid #4545F5;
+    border-radius: 14px;
+}
+
+label {
+    color: #4545F5;
+    text-shadow: 0 0 4px rgba(69, 69, 245, 1);
+    text-align: left;
+    font-family: serif;
+}
+
+input {
+    color: #0030FF !important;
+    background-color: rgba(200, 200, 200, 0.8) !important;
+    font-family: serif;
+    border: 1px solid darkblue;
+}
+
+input:focus {
+    border: 1px dotted gold !important;
+}
+
+button {
+    width: 100px;
+}
+
+::-webkit-input-placeholder {
+    color: #AAFAA5 !important;
+}
+::-moz-placeholder {
+    color: #AAFAA5 !important;
+    opacity: 1 !important;
+}
