@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <include th:replace="/snippets/headinclude"/>
+    <title>Cloud Pocket - Login page</title>
+    <link th:href="@{/css/forms.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="/snippets/menu :: menu"></div>
+<div class="container form" id="register_form">
+    <form class="form-horizontal" role="form" method="POST">
+        <div class="form-group">
+            <label class="control-label col-xs-2" for="login">Login:</label>
+            <div class="col-xs-10">
+                <input type="text" class="form-control" id="login" name="login" placeholder="Your login"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2" for="password">Password:</label>
+            <div class="col-xs-10">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2" for="confirm-password">Confirm password:</label>
+            <div class="col-xs-10">
+                <input type="password" class="form-control" id="confirm-password" name="cofirm-password" placeholder="Confirm your password"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2" for="email">E-mail:</label>
+            <div class="col-xs-10">
+                <input type="email" class="form-control" id="email" placeholder="Your email"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-offset-2 col-xs-10">
+                <button type="submit" class="btn btn-success">Register</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

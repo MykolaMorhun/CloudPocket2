@@ -22,7 +22,7 @@ input {
 }
 
 input:focus {
-    border: 1px dotted gold !important;
+    border: 1px double gold !important;
 }
 
 button {
@@ -30,9 +30,10 @@ button {
 }
 
 ::-webkit-input-placeholder {
-    color: #AAFAA5 !important;
+    color: #B7FAF7 !important;
+    opacity: 0.4 !important;
 }
 ::-moz-placeholder {
-    color: #AAFAA5 !important;
-    opacity: 1 !important;
+    color: #B7FAF7 !important;
+    opacity: 0.4 !important;
 }
