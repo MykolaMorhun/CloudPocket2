@@ -1,4 +1,4 @@
-/* !important uses for override bootstrap styles only */
+/* !important is used for override bootstrap styles only */
 
 .form {
     background-color: rgba(0, 0, 0, 0.65);
@@ -27,6 +27,15 @@ input:focus {
 
 button {
     width: 100px;
+}
+
+input:required:invalid, input:focus:invalid {
+    background: url("/images/forms/invalid.png") no-repeat right top;
+    background-size: 75px;
+}
+input:required:valid {
+    background: url("/images/forms/valid.png") no-repeat right top;
+    background-size: 75px;
 }
 
 ::-webkit-input-placeholder {

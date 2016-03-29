@@ -5,6 +5,7 @@
     <include th:replace="/snippets/headinclude"/>
     <title>Cloud Pocket - Login page</title>
     <link th:href="@{/css/forms.css}" rel="stylesheet"/>
+    <script th:src="@{/scripts/register.js}"></script>
 </head>
 <body>
 <div th:replace="/snippets/menu :: menu"></div>
@@ -13,25 +14,25 @@
         <div class="form-group">
             <label class="control-label col-xs-2" for="login">Login:</label>
             <div class="col-xs-10">
-                <input type="text" class="form-control" id="login" name="login" placeholder="Your login"/>
+                <input type="text" class="form-control" id="login" name="login" required="" pattern="[A-Za-z0-9_]*" placeholder="Your login"/>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2" for="password">Password:</label>
             <div class="col-xs-10">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password"/>
+                <input type="password" class="form-control" id="password" name="password" required="" placeholder="Enter your password" />
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2" for="confirm-password">Confirm password:</label>
             <div class="col-xs-10">
-                <input type="password" class="form-control" id="confirm-password" name="cofirm-password" placeholder="Confirm your password"/>
+                <input type="password" class="form-control" id="confirm-password" name="cofirm-password" required="" placeholder="Confirm your password"/>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2" for="email">E-mail:</label>
             <div class="col-xs-10">
-                <input type="email" class="form-control" id="email" placeholder="Your email"/>
+                <input type="email" class="form-control" id="email" required="" placeholder="Your e-mail"/>
             </div>
         </div>
         <div class="form-group">
