@@ -5,12 +5,13 @@
 </head>
 <body>
 <div th:fragment="menu" class="navbar navbar-default">
-    <script th:src="@{/scripts/welcome_menu.js}"/>
+    <link th:href="@{/css/welcome_menu.css}" rel="stylesheet"/>
+    <script th:src="@{/scripts/welcome_menu.js}"></script>
     <div class="container">
         <div class="container-fluid">
             <div class="navbar-header">
-                <img src="/images/logo.png" class="pull-left" height="35" style="margin: 5px;"/>
-                <a class="navbar-brand" href="#">Cloud Pocket</a>
+                <img src="/images/logo.png" id="menu_logo" class="pull-left" height="35"/>
+                <span class="navbar-brand">Cloud Pocket</span>
             </div>
             <div class="collapse navbar-collapse" id="welcome-menu-navbar">
                 <ul class="nav navbar-nav">

@@ -1,0 +1,35 @@
+#menu_logo {
+    margin: 5px;
+}
+
+.navbar-default {
+    background-color: #181818;
+    border-color: #030033;
+}
+
+/* brand */
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:hover {
+    color: #4545F5;
+    text-shadow: 0 0 4px rgba(69, 69, 245, 1);
+}
+
+/* menu items text color */
+.navbar-default .navbar-nav > li > a {
+    color: blue;
+}
+
+/* menu items hover text color */
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    color: white;
+}
+
+/* background color for active menu item */
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    color: white;
+    background-color: #4545F5;
+}
+
