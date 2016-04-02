@@ -23,12 +23,17 @@ public class EntryController {
         return "info";
     }
 
-    @RequestMapping("login")
+    @RequestMapping("/login")
     public String getLoginPage() {
         return "login";
     }
 
-    @RequestMapping("register")
+    @RequestMapping("/logout")
+    public String getLogoutPage() {
+        return "logout";
+    }
+
+    @RequestMapping("/register")
     public String getRegisterPage() {
         return "register";
     }
