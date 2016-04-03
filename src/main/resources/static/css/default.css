@@ -1,3 +1,11 @@
 body {
     background-image: url("/images/background.jpeg");
 }
+
+#footer {
+    margin-top: 50px;
+    color: #44A444;
+    font-size: 16px;
+    text-align: center;
+    text-shadow: 0px 0px 4px black;
+}
