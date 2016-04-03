@@ -1,46 +1,70 @@
 package com.cloudpocket.model.dto;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Object for transfer data about file.
  */
 public class FileDto {
-    private String name;
-    private String type;
-    private Long size;
-    private Date creationDate;
+    /** full name of file, e.g. 'file.ext' */
+    private String filename;
+    /**
+     * extension of file item, e.g. 'png'
+     * in case of directory or file without extension is empty string
+     */
+    private String extension;
+    /** {@code true} if directory */
+    private boolean directory;
+    /** size in bytes */
+    private long size;
+    /** creation date in format: */
+    private String creationDate;
+    /** creation date in long format */
+    private long creationDateLong;
 
-    public String getName() {
-        return name;
+    private static final SimpleDateFormat FILE_CREATION_DATE_TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
+    public FileDto(String name, boolean directory, long size, long creationDate) {
+        this.filename = name;
+        if (!directory) {
+            int lastDotIndex = filename.lastIndexOf(".");
+            if (lastDotIndex == -1) {
+                extension = "";
+            } else {
+                extension = filename.substring(lastDotIndex + 1).toLowerCase();
+            }
+        } else {
+            extension = "";
+        }
+        this.directory = directory;
+        this.size = size;
+        this.creationDateLong = creationDate;
+        this.creationDate = FILE_CREATION_DATE_TIME_FORMAT.format(new Date(creationDate));
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getFilename() {
+        return filename;
     }
 
-    public String getType() {
-        return type;
+    public String getExtension() {
+        return extension;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public boolean isDirectory() {
+        return directory;
     }
 
-    public Long getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(Long size) {
-        this.size = size;
-    }
-
-    public Date getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+    public long getCreationDateLong() {
+        return creationDateLong;
     }
 
 }

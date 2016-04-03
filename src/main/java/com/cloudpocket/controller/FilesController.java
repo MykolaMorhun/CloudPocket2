@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 
 @RestController
@@ -27,48 +29,80 @@ public class FilesController {
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<FileDto> getFilesList(@RequestParam(required = true) String path,
-                                     @RequestParam(required = false) String order,
-                                     @RequestParam(required = false) Boolean isReverse,
-                                     @AuthenticationPrincipal UserDetails userDetails) {
-        return null; // TODO implement
+                                      @RequestParam(required = false) String order,
+                                      @RequestParam(required = false) Boolean isReverse,
+                                      @AuthenticationPrincipal UserDetails userDetails,
+                                      HttpServletResponse response) {
+        try {
+            return filesService.listFiles(userDetails.getUsername(), path, order, isReverse);
+        } catch (FileNotFoundException e) {
+            response.setStatus(404);
+        } catch (IOException e) {
+            response.setStatus(500);
+        }
+        return null;
     }
 
     @RequestMapping(value = "/copy", method = RequestMethod.POST)
     public Integer copyFiles(@RequestParam(required = true) String pathFrom,
                              @RequestParam(required = true) String pathTo,
                              @RequestParam(required = true) String[] files,
-                             @RequestParam(required = false) Boolean isReplaseIfExist,
-                             @AuthenticationPrincipal UserDetails userDetails) {
-        return null; // TODO implement
+                             @RequestParam(required = false) Boolean isReplaceIfExist,
+                             @AuthenticationPrincipal UserDetails userDetails,
+                             HttpServletResponse response) {
+        try {
+            return filesService.copyFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
+        } catch (IOException e) {
+            response.setStatus(500);
+        }
+        return 0;
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.PUT)
     public Integer moveFiles(@RequestParam(required = true) String pathFrom,
                              @RequestParam(required = true) String pathTo,
                              @RequestParam(required = true) String[] files,
-                             @RequestParam(required = false) Boolean isReplaseIfExist,
-                             @AuthenticationPrincipal UserDetails userDetails) {
-        return null; // TODO implement
+                             @RequestParam(required = false) Boolean isReplaceIfExist,
+                             @AuthenticationPrincipal UserDetails userDetails,
+                             HttpServletResponse response) {
+        try {
+            return filesService.moveFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
+        } catch (IOException e) {
+            response.setStatus(500);
+        }
+        return 0;
     }
 
     @RequestMapping(value = "/rename", method = RequestMethod.PUT)
-    public Boolean renameFile(@RequestParam(required = true) String path,
-                              @RequestParam(required = true) String oldFileName,
-                              @RequestParam(required = true) String newFileName,
-                              @AuthenticationPrincipal UserDetails userDetails) {
-        return null; // TODO implement
+    public void renameFile(@RequestParam(required = true) String path,
+                           @RequestParam(required = true) String oldName,
+                           @RequestParam(required = true) String newName,
+                           @AuthenticationPrincipal UserDetails userDetails,
+                           HttpServletResponse response) {
+        try {
+            filesService.rename(userDetails.getUsername(), path, oldName, newName);
+        } catch (IOException e) {
+            response.setStatus(500);
+        }
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public Integer deleteFiles(@RequestParam(required = true) String path,
                                @RequestParam(required = true) String[] files,
-                               @AuthenticationPrincipal UserDetails userDetails) {
-        return null; // TODO implement
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               HttpServletResponse response) {
+        try {
+            return filesService.deleteFiles(userDetails.getUsername(), path, files);
+        } catch (FileNotFoundException e) {
+            response.setStatus(400);
+        }
+        return 0;
     }
 
     @RequestMapping(value = "/compress", method = RequestMethod.POST)
     public Boolean compressFiles(@RequestParam(required = true) String path,
                                  @RequestParam(required = true) String[] files,
+                                 @RequestParam(required = false) String archiveName,
                                  @RequestParam(required = false) String archiveType,
                                  @AuthenticationPrincipal UserDetails userDetails) {
         return null; // TODO implement
@@ -83,17 +117,19 @@ public class FilesController {
     }
 
     @RequestMapping(value = "/create/folder", method = RequestMethod.POST)
-    public Boolean createFolder(@RequestParam(required = true) String path,
+    public void createFolder(@RequestParam(required = true) String path,
                                @RequestParam(required = true) String name,
                                @AuthenticationPrincipal UserDetails userDetails,
                                HttpServletResponse response) {
         String login = userDetails.getUsername();
         try {
-            filesService.createFolder(login, path, name);
-            return true;
+            filesService.createDirectory(login, path, name);
+        } catch (FileNotFoundException e) {
+            response.setStatus(404);
+        } catch (FileAlreadyExistsException e) {
+            response.setStatus(409);
         } catch (IOException e) {
-            response.setStatus(400);
-            return false;
+            response.setStatus(500);
         }
     }
 

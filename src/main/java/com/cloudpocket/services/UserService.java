@@ -52,7 +52,7 @@ public class UserService {
     /**
      * Adds new user.
      * Creates for new user his home dir. If it already exist
-     *  than try to remove ald folder and create new one.
+     *  then try to remove ald folder and create new one.
      *
      * @param newUserInfo
      *         new user's data
@@ -67,7 +67,7 @@ public class UserService {
 
         Path userHomeDir = Paths.get(PATH_TO_STORAGE, newUserInfo.getLogin());
         if (Files.exists(userHomeDir)) {
-            FSUtils.deleteDirectoryWithContent(userHomeDir);
+            FSUtils.delete(userHomeDir);
         }
         Files.createDirectories(userHomeDir);
 
@@ -83,7 +83,7 @@ public class UserService {
     /**
      * Updates all information about user.
      * Only admin must be able to use this method.
-     * If a field not set, than it will not be updated.
+     * If a field not set, then it will not be updated.
      * Note, that user's id must be the same.
      *
      * @param user
@@ -118,7 +118,7 @@ public class UserService {
 
     /**
      * Updates information about user, which user can change by himself.
-     * If a field not set, than it will not be updated.
+     * If a field not set, then it will not be updated.
      * Note, that user's login is identifier of a user and it must be the same,
      *  otherwise method throw RuntimeException.
      *
@@ -165,7 +165,7 @@ public class UserService {
      */
     private void deleteUserData(String login) {
         try {
-            FSUtils.deleteDirectoryWithContent(Paths.get(PATH_TO_STORAGE, login));
+            FSUtils.delete(Paths.get(PATH_TO_STORAGE, login));
         } catch (IOException e) {
             // TODO log errors
         }
