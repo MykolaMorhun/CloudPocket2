@@ -1,4 +1,4 @@
-package com.cloudpocket.model;
+package com.cloudpocket.model.dto;
 
 /**
  * Object for transfer data about user.

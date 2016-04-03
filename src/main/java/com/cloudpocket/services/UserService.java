@@ -1,7 +1,7 @@
 package com.cloudpocket.services;
 
 import com.cloudpocket.model.User;
-import com.cloudpocket.model.UserDto;
+import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.repository.UserRepository;
 
 import com.cloudpocket.utils.FSUtils;
@@ -26,8 +26,8 @@ public class UserService {
     @Autowired
     private Md5PasswordEncoder md5Encoder;
 
-    @Value("${cloudpocket.sandbox}")
-    private String PATH_TO_SANDBOX;
+    @Value("${cloudpocket.storage}")
+    private String PATH_TO_STORAGE;
 
     public List<User> getAllUsers() {
         return repository.findAll();
@@ -65,7 +65,7 @@ public class UserService {
             throw new RuntimeException();
         }
 
-        Path userHomeDir = Paths.get(PATH_TO_SANDBOX, newUserInfo.getLogin());
+        Path userHomeDir = Paths.get(PATH_TO_STORAGE, newUserInfo.getLogin());
         if (Files.exists(userHomeDir)) {
             FSUtils.deleteDirectoryWithContent(userHomeDir);
         }
@@ -99,7 +99,7 @@ public class UserService {
             user.setLogin(oldUserData.getLogin());
         } else {
             if (!oldUserData.getLogin().equals(user.getLogin())) {
-                Path oldHomeDirName = Paths.get(PATH_TO_SANDBOX, oldUserData.getLogin());
+                Path oldHomeDirName = Paths.get(PATH_TO_STORAGE, oldUserData.getLogin());
                 Files.move(oldHomeDirName, oldHomeDirName.resolveSibling(user.getLogin()));
             }
         }
@@ -165,7 +165,7 @@ public class UserService {
      */
     private void deleteUserData(String login) {
         try {
-            FSUtils.deleteDirectoryWithContent(Paths.get(PATH_TO_SANDBOX, login));
+            FSUtils.deleteDirectoryWithContent(Paths.get(PATH_TO_STORAGE, login));
         } catch (IOException e) {
             // TODO log errors
         }

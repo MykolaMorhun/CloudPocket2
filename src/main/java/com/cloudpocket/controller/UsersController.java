@@ -1,7 +1,7 @@
 package com.cloudpocket.controller;
 
 import com.cloudpocket.model.User;
-import com.cloudpocket.model.UserDto;
+import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
