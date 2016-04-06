@@ -27,10 +27,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers("/api/**").fullyAuthenticated()
-            .antMatchers("/api/version").permitAll()
-            .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login")
+            .antMatchers("/storage**").fullyAuthenticated()
+            .antMatchers("/api/version").anonymous()
             .and().formLogin().loginPage("/login")
-                .usernameParameter("login").passwordParameter("password").defaultSuccessUrl("/storage");
+                .usernameParameter("login").passwordParameter("password").defaultSuccessUrl("/storage")
+            .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login");
     }
 
     @Override

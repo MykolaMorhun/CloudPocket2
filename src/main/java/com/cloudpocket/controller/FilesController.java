@@ -4,6 +4,7 @@ import com.cloudpocket.model.dto.FileDto;
 import com.cloudpocket.services.FilesService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,7 @@ public class FilesController {
     FilesService filesService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<FileDto> getFilesList(@RequestParam(required = true) String path,
+    public List<FileDto> getFilesList(@RequestParam(required =  true) String path,
                                       @RequestParam(required = false) String order,
                                       @RequestParam(required = false) Boolean isReverse,
                                       @AuthenticationPrincipal UserDetails userDetails,
@@ -100,30 +101,48 @@ public class FilesController {
     }
 
     @RequestMapping(value = "/compress", method = RequestMethod.POST)
-    public Boolean compressFiles(@RequestParam(required = true) String path,
-                                 @RequestParam(required = true) String[] files,
-                                 @RequestParam(required = false) String archiveName,
-                                 @RequestParam(required = false) String archiveType,
-                                 @AuthenticationPrincipal UserDetails userDetails) {
-        return null; // TODO implement
+    public void compressFiles(@RequestParam(required = true) String path,
+                              @RequestParam(required = true) String[] files,
+                              @RequestParam(required = false) String archiveName,
+                              @RequestParam(required = false) String archiveType,
+                              @AuthenticationPrincipal UserDetails userDetails,
+                              HttpServletResponse response) {
+        try {
+            filesService.createArchive(userDetails.getUsername(), path, files, archiveName, archiveType);
+        } catch (FileNotFoundException e) {
+            response.setStatus(404);
+        } catch (IOException e) {
+            response.setStatus(500);
+        }
     }
 
     @RequestMapping(value = "/uncompress", method = RequestMethod.POST)
-    public Boolean uncompressFiles(@RequestParam(required = true) String path,
-                                   @RequestParam(required = true) String[] files,
-                                   @RequestParam(required = false) String archiveType,
-                                   @AuthenticationPrincipal UserDetails userDetails) {
-        return null; // TODO implement
+    public void uncompressFiles(@RequestParam(required = true) String path,
+                                @RequestParam(required = true) String archiveName,
+                                @RequestParam(required = true) String archiveType,
+                                @RequestParam(required = false) Boolean extractIntoSubdirectory,
+                                @AuthenticationPrincipal UserDetails userDetails,
+                                HttpServletResponse response) {
+        try {
+            filesService.uncompressArchive(userDetails.getUsername(),
+                                           path,
+                                           archiveName,
+                                           archiveType,
+                                           extractIntoSubdirectory);
+        } catch (FileNotFoundException e) {
+            response.setStatus(404);
+        } catch (IOException e) {
+            response.setStatus(500);
+        }
     }
 
     @RequestMapping(value = "/create/folder", method = RequestMethod.POST)
-    public void createFolder(@RequestParam(required = true) String path,
-                               @RequestParam(required = true) String name,
-                               @AuthenticationPrincipal UserDetails userDetails,
-                               HttpServletResponse response) {
-        String login = userDetails.getUsername();
+    public void createDirectory(@RequestParam(required = true) String path,
+                                @RequestParam(required = true) String name,
+                                @AuthenticationPrincipal UserDetails userDetails,
+                                HttpServletResponse response) {
         try {
-            filesService.createDirectory(login, path, name);
+            filesService.createDirectory(userDetails.getUsername(), path, name);
         } catch (FileNotFoundException e) {
             response.setStatus(404);
         } catch (FileAlreadyExistsException e) {
@@ -133,14 +152,39 @@ public class FilesController {
         }
     }
 
-    @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public String downloadFiles(@RequestParam(required = true) String path,
-                                @RequestParam(required = true) String[] files,
-                                @AuthenticationPrincipal UserDetails userDetails) {
-        return null; // TODO implement
+    @RequestMapping(value = "/download/file", method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public void downloadFile(@RequestParam(required = true) String path,
+                             @RequestParam(required = true) String file,
+                             @AuthenticationPrincipal UserDetails userDetails,
+                             HttpServletResponse response) {
+        try {
+            filesService.downloadFile(userDetails.getUsername(), path, file, response);
+        } catch (FileNotFoundException e) {
+            response.setStatus(404);
+        } catch (IOException e) {
+            response.setStatus(500);
+        }
     }
 
-    @RequestMapping(value = "/upload/file", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/download/archive", method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public void downloadFilesInArchive(@RequestParam(required = true) String path,
+                                       @RequestParam(required = true) String[] files,
+                                       @AuthenticationPrincipal UserDetails userDetails,
+                                       HttpServletResponse response) {
+        try {
+            filesService.downloadFilesInArchive(userDetails.getUsername(), path, files, response);
+        } catch (FileNotFoundException e) {
+            response.setStatus(404);
+        } catch (IOException e) {
+            response.setStatus(500);
+        }
+    }
+
+    @RequestMapping(value = "/upload/file", method = RequestMethod.POST,
+                    consumes = "multipart/form-data")
     public String uploadFile(@RequestParam(required = true) String path,
                              @RequestParam(required = false) String name,
                              @AuthenticationPrincipal UserDetails userDetails) {
