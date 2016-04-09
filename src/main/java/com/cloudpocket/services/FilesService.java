@@ -1,5 +1,6 @@
 package com.cloudpocket.services;
 
+import com.cloudpocket.model.enums.ArchiveType;
 import com.cloudpocket.model.dto.FileDto;
 import com.cloudpocket.utils.FSUtils;
 import com.cloudpocket.utils.FilesSorter;
@@ -8,12 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -172,8 +169,8 @@ public class FilesService {
      *         name of files and directories
      * @param archiveName
      *         name of the archive
-     * @param archiveType
-     *         type of the archive, e.g. 'zip', 'rar' etc.
+     * @param archiveTypeString
+     *         type of the archive, e.g. 'ZIP', 'RAR' etc.
      * @return number of added items (subdirectories and files in them, do not counts)
      * @throws IOException
      *         if an error occurred while creating the archive
@@ -184,19 +181,21 @@ public class FilesService {
                              String path,
                              String[] files,
                              String archiveName,
-                             String archiveType) throws IOException {
+                             String archiveTypeString) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
         if (archiveName == null) {
             archiveName = new Date().toString();
         }
-        if (archiveType == null) {
-            archiveType = "zip";
+        if (archiveTypeString == null) {
+            archiveTypeString = "ZIP";
         }
-
+        ArchiveType archiveType = ArchiveType.valueOf(archiveTypeString);
         switch (archiveType) {
-            case "zip":
+            case ZIP:
                 return ZipUtils.zip(absolutePath, files, archiveName);
+            case RAR:
+                throw new UnsupportedOperationException();
             default:
                 throw new IllegalArgumentException("Unsupported archive type");
         }
@@ -211,8 +210,8 @@ public class FilesService {
      *         absolute path to directory, where the archive is located
      * @param archiveName
      *         name of the archive to uncompress
-     * @param archiveType
-     *         type of the archive, e.g. 'zip', 'rar' etc.
+     * @param archiveTypeString
+     *         type of the archive, e.g. 'ZIP', 'RAR' etc.
      *         (for now only 'zip' is supported)
      * @param extractIntoSubdirectory
      *         if {@code true} archive will be extracted into a separate directory
@@ -224,14 +223,20 @@ public class FilesService {
     public void uncompressArchive(String login,
                                   String path,
                                   String archiveName,
-                                  String archiveType,
+                                  String archiveTypeString,
                                   Boolean extractIntoSubdirectory) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
+        if (archiveTypeString == null) {
+            archiveTypeString = "ZIP";
+        }
+        ArchiveType archiveType = ArchiveType.valueOf(archiveTypeString);
         switch (archiveType) {
-            case "zip":
+            case ZIP:
                 ZipUtils.unzip(absolutePath, archiveName, firstIfNotNull(extractIntoSubdirectory, true));
                 break;
+            case RAR:
+                throw new UnsupportedOperationException();
             default:
                 throw new IllegalArgumentException("Unsupported archive type");
         }

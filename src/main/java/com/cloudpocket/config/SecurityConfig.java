@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -25,13 +26,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-            .antMatchers("/api/**").fullyAuthenticated()
-            .antMatchers("/storage**").fullyAuthenticated()
-            .antMatchers("/api/version").anonymous()
+        http
+            .authorizeRequests()
+                .antMatchers("/api/**").fullyAuthenticated()
+                /*.antMatchers("/api/**").hasRole("user")
+                /*.antMatchers("/api/users/**").hasRole("admin")
+                //.antMatchers("/api/user/**").access("hasRole('admin') and hasRole('user')")
+                .antMatchers("/api/user/**").hasRole("user")
+                .antMatchers("/api/files/**").hasRole("user")
+                .antMatchers("/api/storage/**").hasRole("user")
+                //.antMatchers("/storage**").fullyAuthenticated()*/
+                //.antMatchers("/api/version").permitAll()
             .and().formLogin().loginPage("/login")
                 .usernameParameter("login").passwordParameter("password").defaultSuccessUrl("/storage")
-            .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login");
+            .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login")
+                .invalidateHttpSession(true).addLogoutHandler(new CookieClearingLogoutHandler());
     }
 
     @Override
@@ -40,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public Md5PasswordEncoder getPasswordEncoder(){
+    public Md5PasswordEncoder getPasswordEncoder() {
         return new Md5PasswordEncoder();
     }
 
@@ -52,10 +61,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 com.cloudpocket.model.User user = userService.getUserByLogin(username);
                 if (user != null) {
                     if (user.getId() != 1) {
-                        return new User(user.getLogin(), user.getPasswordHash(), true, true, true, true,
+                        return new User(user.getLogin(), user.getPasswordHash(),
                                 AuthorityUtils.createAuthorityList("user"));
                     } else {
-                        return new User(user.getLogin(), user.getPasswordHash(), true, true, true, true,
+                        return new User(user.getLogin(), user.getPasswordHash(),
                                 AuthorityUtils.createAuthorityList("admin"));
                     }
                 } else {

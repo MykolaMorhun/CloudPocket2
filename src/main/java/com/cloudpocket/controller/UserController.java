@@ -22,7 +22,7 @@ import java.util.Date;
 /**
  * Client's user controller.
  */
-@Api(basePath = "//api/user", value = "usercontrol", description = "Operations with user", produces = "application/json")
+@Api(basePath = "/api/user", value = "User controller", description = "Operations with a user", produces = "application/json")
 @RestController
 @RequestMapping(value = "/api/user", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
@@ -37,23 +37,21 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "") })
-    @RolesAllowed("user")
     @RequestMapping(method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
         User fullUserInfo = userService.getUserByLogin(userDetails.getUsername());
         return new UserDto().withLogin(fullUserInfo.getLogin())
-                .withPassword(fullUserInfo.getPasswordHash())
-                .withEmail(fullUserInfo.getEmail());
+                            .withPassword(fullUserInfo.getPasswordHash())
+                            .withEmail(fullUserInfo.getEmail());
     }
 
     @ApiOperation(value = "Update user",
-            notes = "Updates user profile")
+                  notes = "Updates user profile")
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "Update success") })
-    @RolesAllowed("user")
     @RequestMapping(method = RequestMethod.PUT,
                     consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,7 +72,6 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "Deletion success") })
-    @RolesAllowed("user")
     @RequestMapping(method = RequestMethod.DELETE,
                     consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,12 +87,11 @@ public class UserController {
     }
 
     @ApiOperation(value = "Get user registration date",
-            notes = "Gets date of user registration in format: 'dd.MM.yyyy hh:mm:ss'")
+                  notes = "Gets date of user registration in format: 'dd.MM.yyyy hh:mm:ss'")
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "") })
-    @RolesAllowed("user")
     @RequestMapping(value = "/joindate", method = RequestMethod.GET,
                     produces = MediaType.TEXT_PLAIN_VALUE)
     public String getJoinDate(@AuthenticationPrincipal UserDetails userDetails) {

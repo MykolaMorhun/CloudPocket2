@@ -3,13 +3,25 @@ package com.cloudpocket.controller;
 import com.cloudpocket.model.User;
 import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.services.UserService;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 /**
  * Admin's users controller.
@@ -20,39 +32,76 @@ public class UsersController {
     @Autowired
     private UserService userService;
 
-    @RolesAllowed("admin")
-    @RequestMapping(method = RequestMethod.GET)
-    public List<User> getUsers(@RequestParam(required = false) Long pageSize) {
-        if (pageSize == null) pageSize = 50L;
-        return userService.getUsers(); // TODO pagination
+    @ApiOperation(value = "Get users info",
+                  notes = "Gets detailed information about users")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(method = RequestMethod.GET,
+                    produces = APPLICATION_JSON_VALUE)
+    public List<User> getUsers(@RequestParam(required = false) Integer page,
+                               @RequestParam(required = false) Integer itemsPerPage) {
+        return userService.getUsers(page, itemsPerPage);
     }
 
-    @RolesAllowed("admin")
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @ApiOperation(value = "Get users info",
+            notes = "Gets detailed information about all users")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(value = "/all", method = RequestMethod.GET,
+                    produces = APPLICATION_JSON_VALUE)
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @RolesAllowed("admin")
-    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    @ApiOperation(value = "Count users",
+                  notes = "Gets total number of service users")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(value = "/count", method = RequestMethod.GET,
+                    produces = TEXT_PLAIN_VALUE)
     public Long countAccounts() {
         return userService.countUsers();
     }
 
-    @RolesAllowed("admin")
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get user info",
+                  notes = "Gets detailed information about user")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET,
+                    produces = APPLICATION_JSON_VALUE)
     public User getUserById(@PathVariable long id) {
         return userService.getUserById(id);
     }
 
-    @RolesAllowed("admin")
-    @RequestMapping(value = "/login/{login}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get user info",
+                  notes = "Gets detailed information about user")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(value = "/login/{login}", method = RequestMethod.GET,
+                    produces = APPLICATION_JSON_VALUE)
     public User getUserByLogin(@PathVariable String login) {
         return userService.getUserByLogin(login);
     }
 
-    @RolesAllowed("admin")
-    @RequestMapping(method = RequestMethod.POST)
+    @ApiOperation(value = "Add new user",
+                  notes = "Add new user to the service")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(method = RequestMethod.POST,
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     public User addUser(@RequestBody UserDto user,
                         HttpServletResponse response) {
         try {
@@ -63,8 +112,15 @@ public class UsersController {
         }
     }
 
-    @RolesAllowed("admin")
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.PUT)
+    @ApiOperation(value = "Update user data",
+                  notes = "Updates all user data except id")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(value = "/id/{id}", method = RequestMethod.PUT,
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     public User updateUser(@PathVariable Long id,
                            @RequestBody User user,
                            HttpServletResponse response) {
@@ -80,13 +136,23 @@ public class UsersController {
         return null;
     }
 
-    @RolesAllowed("admin")
+    @ApiOperation(value = "Delete user",
+                  notes = "Deletes user and his data from the service")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
     @RequestMapping(value = "/id/{id}", method = RequestMethod.DELETE)
     public void deleteUserById(@PathVariable long id) {
         userService.deleteUserById(id);
     }
 
-    @RolesAllowed("admin")
+    @ApiOperation(value = "Delete user",
+                  notes = "Deletes user and his data from the service")
+    @ResponseStatus(OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
     @RequestMapping(value = "login/{login}", method = RequestMethod.DELETE)
     public void deleteUserByLogin(@PathVariable String login) {
         userService.deleteUserByLogin(login);

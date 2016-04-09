@@ -2,9 +2,13 @@ package com.cloudpocket.repository;
 
 import com.cloudpocket.model.User;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -13,7 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     void deleteUserByLogin(String login);
 
-    @Query("SELECT COUNT(u) FROM User u")
-    Long countUsers();
+    long count();
+
+    Page<User> findAll(Pageable pageable);
 
 }

@@ -7,6 +7,8 @@ import com.cloudpocket.repository.UserRepository;
 import com.cloudpocket.utils.FSUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,12 +35,20 @@ public class UserService {
         return repository.findAll();
     }
 
-    public List<User> getUsers() {
-        return repository.findAll(); // TODO add pagination
+    public List<User> getUsers(Integer page, Integer itemsPerPage) {
+        if (page == null) {
+            page = 0;
+        }
+        if (itemsPerPage == null) {
+            itemsPerPage = 10;
+        }
+
+        Pageable pageable = new PageRequest(page, itemsPerPage);
+        return repository.findAll(pageable).getContent();
     }
 
     public Long countUsers() {
-        return repository.countUsers();
+        return repository.count();
     }
 
     public User getUserById(long id) {
