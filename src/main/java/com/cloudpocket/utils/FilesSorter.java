@@ -1,6 +1,7 @@
 package com.cloudpocket.utils;
 
 import com.cloudpocket.model.dto.FileDto;
+import com.cloudpocket.model.enums.FilesOrder;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,32 +14,29 @@ public class FilesSorter {
 
     /**
      * Sorts files list.
-     * If {@code order} is not set or invalid value,
-     *  files will be sorted by name.
+     * If {@code order} is not set files will be sorted by name.
      *
      * @param files
      *         files list
      * @param order
      *         specify criteria for sorting
-     *         Valid criteria: 'name', 'size', 'type', 'date'
-     *         If criterion is wrong or not set, then used 'name' criterion.
+     *         If criterion is not set, then will be used NAME criterion.
      * @param isReverse
      *         if {@code true} then sorts in descending mode, ascending otherwise.
      * @return sorted files list
      */
-    public static List<FileDto> sortFiles(List<FileDto> files, String order, boolean isReverse) {
-        String sortBy = order == null ? "name" : order;
-        switch (sortBy) {
-            case "name":
+    public static List<FileDto> sortFiles(List<FileDto> files, FilesOrder order, boolean isReverse) {
+        switch (order) {
+            case NAME:
                 Collections.sort(files, comparatorByName);
                 break;
-            case "size":
+            case SIZE:
                 Collections.sort(files, comparatorBySize);
                 break;
-            case "type":
+            case TYPE:
                 Collections.sort(files, comparatorByType);
                 break;
-            case "date":
+            case DATE:
                 Collections.sort(files, comparatorByDate);
                 break;
             default:

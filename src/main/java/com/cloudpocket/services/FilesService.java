@@ -1,12 +1,16 @@
 package com.cloudpocket.services;
 
+import com.cloudpocket.model.FileDetails;
 import com.cloudpocket.model.enums.ArchiveType;
 import com.cloudpocket.model.dto.FileDto;
+import com.cloudpocket.model.enums.FilesOrder;
 import com.cloudpocket.utils.FSUtils;
 import com.cloudpocket.utils.FilesSorter;
+import com.cloudpocket.utils.StreamUtils;
 import com.cloudpocket.utils.ZipUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
@@ -18,13 +22,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static com.cloudpocket.utils.StreamUtils.writeFileToOutputStream;
 import static com.cloudpocket.utils.Utils.firstIfNotNull;
 
 @Component
 public class FilesService {
+
+    private static final int SEARCH_MAX_RESULTS = 1000;
 
     @Value("${cloudpocket.storage}")
     public String PATH_TO_STORAGE;
@@ -36,10 +43,10 @@ public class FilesService {
      *         user's login
      * @param path
      *         path to directory
-     * @param order
-     *         sort order
-     *         Valid values are: 'name', 'size', 'type', 'date'
-     *         If value is wrong or not set, then used order by 'name'.
+     * @param sortOrder
+     *         files sort order
+     *         Valid values are: 'NAME', 'SIZE', 'TYPE', 'DATE'
+     *         If value is wrong or not set, then uses order by 'NAME'.
      * @param isReverse
      *         if {@code true} then sorts in descending mode, ascending otherwise.
      * @return list of files in given directory
@@ -48,7 +55,7 @@ public class FilesService {
      * @throws IOException
      *         if error occurs while reading data from the file system
      */
-    public List<FileDto> listFiles(String login, String path, String order, Boolean isReverse) throws IOException {
+    public List<FileDto> listFiles(String login, String path, String sortOrder, Boolean isReverse) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
         List<FileDto> files = new ArrayList<>();
@@ -58,6 +65,7 @@ public class FilesService {
             }
         }
 
+        FilesOrder order = FilesOrder.thisOrDefault(sortOrder);
         return FilesSorter.sortFiles(files, order, firstIfNotNull(isReverse, false));
     }
 
@@ -218,7 +226,7 @@ public class FilesService {
      * @throws IOException
      *         if error occurs while uncompressing the archive
      * @throws IllegalArgumentException
-     *         if given unsupported archive type
+     *         if given unsupported archive type or archive is damaged
      */
     public void uncompressArchive(String login,
                                   String path,
@@ -288,7 +296,7 @@ public class FilesService {
             response.setContentType(Files.probeContentType(pathToFile));
             response.setHeader("Content-disposition", "attachment; filename=\"" + pathToFile.getFileName() + "\"");
             response.setContentLengthLong(Files.size(pathToFile));
-            writeFileToOutputStream(pathToFile, response.getOutputStream());
+            StreamUtils.writeFileToOutputStream(pathToFile, response.getOutputStream());
         } else {
             throw new FileNotFoundException();
         }
@@ -305,13 +313,12 @@ public class FilesService {
      *         list of file to download
      * @param response
      *         http servlet response
-     * @return number of items in the archive root
      * @throws IOException
      */
     public void downloadFilesInArchive(String login,
-                                      String path,
-                                      String[] files,
-                                      HttpServletResponse response) throws IOException {
+                                       String path,
+                                       String[] files,
+                                       HttpServletResponse response) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
         String archiveName = String.valueOf(new Date().getTime());
         ZipUtils.zip(absolutePath, files, archiveName);
@@ -319,8 +326,143 @@ public class FilesService {
         response.setContentType("application/zip");
         response.setHeader("Content-disposition", "attachment; filename=\"" + archiveName + ".zip\"");
         response.setContentLengthLong(Files.size(pathToArchive));
-        writeFileToOutputStream(pathToArchive, response.getOutputStream());
+        StreamUtils.writeFileToOutputStream(pathToArchive, response.getOutputStream());
         FSUtils.delete(pathToArchive);
+    }
+
+    /**
+     * Saves file which was send to server by user.
+     *
+     * @param login
+     *         user's login
+     * @param path
+     *         absolute path to directory in which file must be saved
+     * @param name
+     *         name of the file
+     * @param file
+     *         file content
+     * @throws IOException
+     */
+    public void uploadFile(String login, String path, String name, MultipartFile file) throws IOException {
+        if (! file.isEmpty()) {
+            if (name == null) {
+                name = file.getOriginalFilename();
+            }
+            Path absolutePath = getAbsolutePath(login, path);
+            StreamUtils.writeInputStreamToFile(absolutePath.resolve(name), file.getInputStream());
+        }
+    }
+
+    /**
+     * Saves data from archive
+     *
+     * @param login
+     *         user's login
+     * @param path
+     *         absolute path to directory in which file structure must be saved
+     * @param file
+     *         archive with file structure
+     * @param skipSubfolder
+     *         if {@code false} than save file structure directly in the specified directory
+     * @throws IOException
+     */
+    public void uploadFileStructure(String login, String path, MultipartFile file, Boolean skipSubfolder)
+            throws IOException {
+        if (! file.isEmpty()) {
+            Path absolutePath = getAbsolutePath(login, path);
+            String name = file.getOriginalFilename();
+            StreamUtils.writeInputStreamToFile(absolutePath.resolve(name), file.getInputStream());
+            ZipUtils.unzip(absolutePath, name, ! firstIfNotNull(skipSubfolder, true));
+            Files.delete(absolutePath.resolve(name));
+        }
+    }
+
+    /**
+     * Searches for files and directories.
+     * Returns map in which:
+     *  key is path to found item,
+     *  value is information about this item
+     *
+     * @param login
+     *         user's login
+     * @param path
+     *         absolute path to directory to search in
+     * @param namePattern
+     *         regex for match files and directories.
+     *         Must be at least 3 symbols long.
+     *         Just part of a file name is correct.
+     * @param skipSubfolders
+     *         if {@code false} than search for files and directories
+     *         exactly inside given directory, no recursive search.
+     *         {@code false} by default.
+     * @param maxResults
+     *         maximal number of results.
+     *         If it exceed than search stops and returns result.
+     *         Returns no more than 50 results by default.
+     * @return search results
+     * @throws FileNotFoundException
+     *         if directory to search in doesn't exist
+     * @throws IOException
+     *         if errors occurs while reading file system
+     */
+    public Map<String, FileDto> search(String login,
+                                       String path,
+                                       String namePattern,
+                                       Boolean skipSubfolders,
+                                       Integer maxResults) throws IOException {
+        if (namePattern == null || namePattern.length() < 3) {
+            throw new IllegalArgumentException("name pattren");
+        }
+        if (maxResults != null) {
+            if (maxResults < 1 || maxResults > SEARCH_MAX_RESULTS) {
+                throw new IllegalArgumentException("max search result");
+            }
+        } else {
+            maxResults = 50;
+        }
+        if (skipSubfolders == null) {
+            skipSubfolders = false;
+        }
+
+        Path absolutePath = getAbsolutePath(login, path);
+        Map <Path, FileDto> searchResult;
+        if (skipSubfolders) {
+            searchResult = FSUtils.searchInsideDirectoryOnly(absolutePath, namePattern, maxResults);
+        } else {
+            searchResult = FSUtils.searchRecursively(absolutePath, namePattern, maxResults);
+        }
+
+        Map <String, FileDto> results = new HashMap<>();
+        for (Map.Entry<Path, FileDto> entry : searchResult.entrySet()) {
+            results.put(getPathInsideUserHomeDirectory(entry.getKey(), login), entry.getValue());
+        }
+        return results;
+    }
+
+    /**
+     * Returns detailed information about file system entry.
+     *
+     * @param login
+     *         user's login
+     * @param path
+     *         path to directory with given file
+     * @param name
+     *         name of a file
+     * @return detailed information about file system entry
+     * @throws FileNotFoundException
+     *         if specified file doesn't exist
+     * @throws IOException
+     */
+    public FileDetails getDetailedFileInfo(String login, String path, String name) throws IOException {
+        Path absolutePath = getAbsolutePath(login, path);
+        Path pathToFile = absolutePath.resolve(name);
+        if (Files.exists(pathToFile)) {
+            FileDetails fileDetails = FSUtils.getDetailedInfoFromPath(pathToFile);
+            fileDetails.setOwner(login);
+            fileDetails.setPath(getPathInsideUserHomeDirectory(Paths.get(fileDetails.getPath()), login));
+            return fileDetails;
+        }
+        throw new FileNotFoundException();
     }
 
     /**
@@ -340,6 +482,21 @@ public class FilesService {
             throw new FileNotFoundException("Wrong path");
         }
         return absolutePath;
+    }
+
+    /**
+     * Returns path to given file or folder relatively to user's home directory.
+     * This method is the inverse of {@link #getAbsolutePath(String, String)}
+     *
+     * @param absolutePath
+     *         absolute path on server's file system to a file
+     *         inside user's home directory
+     * @param login
+     *         user's login
+     * @return absolute path inside user's home directory
+     */
+    private String getPathInsideUserHomeDirectory(Path absolutePath, String login) {
+        return "/" + Paths.get(PATH_TO_STORAGE, login).relativize(absolutePath).toString();
     }
 
 }

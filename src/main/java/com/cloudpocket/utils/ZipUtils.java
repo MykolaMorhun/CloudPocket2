@@ -71,10 +71,15 @@ public class ZipUtils {
      *          (e.g. demo -> demo.extracted)
      * @throws IOException
      *         if error occurs while uncompressing files
+     * @throws IllegalArgumentException
+     *         if given file isn't valid zip archive
      */
     public static void unzip(Path path, String archiveName, boolean subfolder) throws IOException {
         try {
             ZipFile zipFile = new ZipFile(path + "/" + archiveName);
+            if (! zipFile.isValidZipFile()) {
+                throw new IllegalArgumentException();
+            }
             if (subfolder) {
                 String directoryName;
                 if (archiveName.endsWith(".zip")) {

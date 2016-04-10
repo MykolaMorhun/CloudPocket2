@@ -31,6 +31,7 @@ public class SwaggerConfig {
                         null,
                         null
                 ))
+                .apiVersion("${cloudpocket.api.version}")
                 .useDefaultResponseMessages(false)
                 .includePatterns("/api/.*")
                 .ignoredParameterTypes(UserDetails.class,

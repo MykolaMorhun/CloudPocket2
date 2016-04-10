@@ -1,14 +1,20 @@
 package com.cloudpocket.utils;
 
+import com.cloudpocket.model.FileDetails;
 import com.cloudpocket.model.dto.FileDto;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -34,8 +40,9 @@ public class FSUtils {
         Path newDirectoryPath = path.resolve(folderName);
         if (!Files.exists(newDirectoryPath)) {
             Files.createDirectory(newDirectoryPath);
+        } else {
+            throw new FileAlreadyExistsException(path + "/" + folderName);
         }
-        throw new FileAlreadyExistsException(path + "/" + folderName);
     }
 
     /**
@@ -149,7 +156,7 @@ public class FSUtils {
             } catch (FileAlreadyExistsException ignore) {
                 // if we shouldn't replace files, just skip moving of this file
             } catch (FileNotFoundException ignore) {
-            // if file not found, just skip it
+                // if file not found, just skip it
             }
         }
         return counter;
@@ -178,6 +185,90 @@ public class FSUtils {
     }
 
     /**
+     * The same as {@link #searchRecursively(Path, String, int)}, but only inside given directory,
+     * do not search inside subdirectories.
+     */
+    public static Map<Path, FileDto> searchInsideDirectoryOnly(Path absolutePath, String namePattern, int maxResults)
+            throws IOException {
+        if (namePattern == null || maxResults < 1) {
+            throw new IllegalArgumentException();
+        }
+
+        int resultsCounter = 0;
+        File folder = new File(absolutePath.toString());
+        Map<Path, FileDto> foundFiles = new HashMap<>();
+        File[] items = folder.listFiles();
+        if (items != null) {
+            Pattern pattern = Pattern.compile(namePattern);
+            for (File item : items) {
+                if (pattern.matcher(item.getName()).find()) {
+                    foundFiles.put(item.toPath(), getFileCommonInfoFromPath(item.toPath()));
+                    resultsCounter++;
+                    if (resultsCounter >= maxResults) {
+                        break;
+                    }
+                }
+            }
+        }
+        return foundFiles;
+    }
+
+    /**
+     * Searches recursively for file and directories.
+     * Returns map in which:
+     *  key is absolute path to found item,
+     *  value is information about this item
+     *
+     * @param absolutePath
+     *         absolute path to directory to search in
+     * @param namePattern
+     *         regex for match files and directories.
+     *         Just part of a file name is correct.
+     * @param maxResults
+     *         maximal number of results.
+     *         If it exceed than search stops and returns result.
+     * @return search results
+     * @throws IOException
+     *         if errors occurs while reading file system
+     */
+    public static Map<Path, FileDto> searchRecursively(Path absolutePath, String namePattern, int maxResults)
+            throws IOException {
+        if (namePattern == null || maxResults < 1) {
+            throw new IllegalArgumentException();
+        }
+
+        Map<Path, FileDto> foundFiles = new HashMap<>();
+        Pattern pattern = Pattern.compile(namePattern);
+        Files.walkFileTree(absolutePath, new SimpleFileVisitor<Path>() {
+            private int resultsCounter = 0;
+
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                return verify(dir);
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                return verify(file);
+            }
+
+            private FileVisitResult verify(Path item) throws IOException {
+                if (pattern.matcher(item.getFileName().toString()).find()) {
+                    foundFiles.put(item, getFileCommonInfoFromPath(item));
+                    resultsCounter++;
+                }
+                if (resultsCounter < maxResults) {
+                    return FileVisitResult.CONTINUE;
+                } else {
+                    return FileVisitResult.TERMINATE;
+                }
+            }
+
+        });
+        return foundFiles;
+    }
+
+    /**
      * Retrieves basic information about given file.
      *
      * @param item
@@ -189,10 +280,38 @@ public class FSUtils {
 
         String name = item.getFileName().toString();
         boolean isDirectory = attrs.isDirectory();
-        long size = Files.size(item);
+        long size = attrs.size();
         long creationTime = attrs.creationTime().toMillis();
 
         return new FileDto(name, isDirectory, size, creationTime);
+    }
+
+    /**
+     * Retrieves information about given file.
+     *
+     * @param item
+     *         path to file or directory
+     * @return detailed information about file system item
+     * @throws IOException
+     */
+    public static FileDetails getDetailedInfoFromPath(Path item) throws IOException {
+        File file = item.toFile();
+        BasicFileAttributes attrs = Files.readAttributes(item, BasicFileAttributes.class);
+
+        FileDetails fileDetails = new FileDetails();
+        fileDetails.setName(file.getName());
+        fileDetails.setPath(file.getAbsolutePath());
+        fileDetails.setSize(attrs.size());
+        fileDetails.setDirectory(attrs.isDirectory());
+        fileDetails.setExecutable(file.canExecute());
+        fileDetails.setHidden(file.isHidden());
+        fileDetails.setCreated(attrs.creationTime().toMillis());
+        fileDetails.setModified(file.lastModified());
+        fileDetails.setAccessed(attrs.lastAccessTime().toMillis());
+        fileDetails.setOwner(Files.getOwner(item).getName());
+        fileDetails.setContentType(Files.probeContentType(item));
+
+        return fileDetails;
     }
 
 }

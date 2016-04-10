@@ -14,8 +14,4 @@ public class CloudPocketApplication {
 		SpringApplication.run(CloudPocketApplication.class, args);
 	}
 
-	@Bean
-	public PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
 }

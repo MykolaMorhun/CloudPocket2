@@ -87,7 +87,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "Get user registration date",
-                  notes = "Gets date of user registration in format: 'dd.MM.yyyy hh:mm:ss'")
+                  notes = "Gets date of user registration in the format: 'dd.MM.yyyy hh:mm:ss'")
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
