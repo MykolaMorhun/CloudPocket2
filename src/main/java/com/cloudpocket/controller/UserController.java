@@ -9,22 +9,26 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.springframework.http.MediaType.*;
+
 /**
  * Client's user controller.
  */
-@Api(basePath = "/api/user", value = "User controller", description = "Operations with a user", produces = "application/json")
+@Api(basePath = "/api/user", value = "User controller", description = "Operations with a user")
 @RestController
-@RequestMapping(value = "/api/user", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/user", produces = APPLICATION_JSON_VALUE)
 public class UserController {
     @Autowired
     private UserService userService;
@@ -38,7 +42,7 @@ public class UserController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "") })
     @RequestMapping(method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+                    produces = APPLICATION_JSON_VALUE)
     public UserDto getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
         User fullUserInfo = userService.getUserByLogin(userDetails.getUsername());
         return new UserDto().withLogin(fullUserInfo.getLogin())
@@ -53,8 +57,8 @@ public class UserController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "Update success") })
     @RequestMapping(method = RequestMethod.PUT,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     public UserDto updateUser(@AuthenticationPrincipal UserDetails userDetails,
                               @RequestBody(required = true) UserDto userInfo,
                               HttpServletResponse response) {
@@ -73,8 +77,8 @@ public class UserController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "Deletion success") })
     @RequestMapping(method = RequestMethod.DELETE,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     public UserDto deleteUser(@AuthenticationPrincipal UserDetails userDetails,
                               @RequestBody(required = true) UserDto userInfo,
                               HttpServletResponse response) {
@@ -93,7 +97,7 @@ public class UserController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "") })
     @RequestMapping(value = "/joindate", method = RequestMethod.GET,
-                    produces = MediaType.TEXT_PLAIN_VALUE)
+                    produces = TEXT_PLAIN_VALUE)
     public String getJoinDate(@AuthenticationPrincipal UserDetails userDetails) {
         Date joinDate = new Date(userService.getUserByLogin(userDetails.getUsername()).getJoinDate().getTime());
         return JOIN_DATE_FORMAT.format(joinDate);

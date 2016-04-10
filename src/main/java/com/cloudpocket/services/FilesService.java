@@ -31,7 +31,7 @@ import static com.cloudpocket.utils.Utils.firstIfNotNull;
 @Component
 public class FilesService {
 
-    private static final int SEARCH_MAX_RESULTS = 1000;
+    private static final int SEARCH_MAX_RESULTS = 250;
 
     @Value("${cloudpocket.storage}")
     public String PATH_TO_STORAGE;

@@ -3,10 +3,12 @@ package com.cloudpocket.controller;
 import com.cloudpocket.model.User;
 import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.services.UserService;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 /**
  * Admin's users controller.
  */
+@Api(basePath = "/api/users", value = "Users controller", description = "Operations with users")
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
@@ -98,6 +101,7 @@ public class UsersController {
     @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 200, message = "OK") })
     @RequestMapping(method = RequestMethod.POST,
                     consumes = APPLICATION_JSON_VALUE,
@@ -107,7 +111,7 @@ public class UsersController {
         try {
             return userService.addUser(user);
         } catch (IOException e) {
-            response.setStatus(500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return null;
         }
     }
@@ -117,6 +121,8 @@ public class UsersController {
     @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 409, message = "Illegal operation with user"),
+            @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 200, message = "OK") })
     @RequestMapping(value = "/id/{id}", method = RequestMethod.PUT,
                     consumes = APPLICATION_JSON_VALUE,
@@ -128,11 +134,11 @@ public class UsersController {
             try {
                 return userService.updateUser(user);
             } catch (IOException e) {
-                response.setStatus(500);
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return null;
             }
         }
-        response.setStatus(409);
+        response.setStatus(HttpStatus.CONFLICT.value());
         return null;
     }
 

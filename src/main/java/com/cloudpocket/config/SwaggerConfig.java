@@ -21,7 +21,7 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public SwaggerSpringMvcPlugin mvPluginOverride() {
+    public SwaggerSpringMvcPlugin mvcPluginOverride() {
         return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
                 .apiInfo(new ApiInfo(
                         "CloudPocket API",
