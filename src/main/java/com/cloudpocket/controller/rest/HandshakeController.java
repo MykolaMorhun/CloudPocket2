@@ -1,4 +1,4 @@
-package com.cloudpocket.controller;
+package com.cloudpocket.controller.rest;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;

@@ -1,5 +1,6 @@
-package com.cloudpocket.controller;
+package com.cloudpocket.controller.rest;
 
+import com.cloudpocket.exceptions.ForbiddenException;
 import com.cloudpocket.model.User;
 import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.services.UserService;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -60,14 +60,11 @@ public class UserController {
                     consumes = APPLICATION_JSON_VALUE,
                     produces = APPLICATION_JSON_VALUE)
     public UserDto updateUser(@AuthenticationPrincipal UserDetails userDetails,
-                              @RequestBody(required = true) UserDto userInfo,
-                              HttpServletResponse response) {
+                              @RequestBody(required = true) UserDto userInfo) {
         if (userDetails.getUsername().equals(userInfo.getLogin())) {
             return userService.updateUser(userInfo);
-        } else {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
         }
-        return null;
+        throw new ForbiddenException();
     }
 
     @ApiOperation(value = "Delete user",
@@ -80,14 +77,12 @@ public class UserController {
                     consumes = APPLICATION_JSON_VALUE,
                     produces = APPLICATION_JSON_VALUE)
     public UserDto deleteUser(@AuthenticationPrincipal UserDetails userDetails,
-                              @RequestBody(required = true) UserDto userInfo,
-                              HttpServletResponse response) {
+                              @RequestBody(required = true) UserDto userInfo) {
         if (userDetails.getUsername().equals(userInfo.getLogin())) {
             userService.deleteUserByLogin(userInfo.getLogin());
             return userInfo;
         }
-        response.setStatus(403);
-        return null;
+        throw new ForbiddenException();
     }
 
     @ApiOperation(value = "Get user registration date",

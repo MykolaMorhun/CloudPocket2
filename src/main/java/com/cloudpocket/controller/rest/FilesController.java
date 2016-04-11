@@ -1,4 +1,4 @@
-package com.cloudpocket.controller;
+package com.cloudpocket.controller.rest;
 
 import com.cloudpocket.model.FileDetails;
 import com.cloudpocket.model.dto.FileDto;
@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Map;
 
@@ -52,16 +51,8 @@ public class FilesController {
     public List<FileDto> getFilesList(@RequestParam(required =  true) String path,
                                       @RequestParam(required = false) String order,
                                       @RequestParam(required = false) Boolean isReverse,
-                                      @AuthenticationPrincipal UserDetails userDetails,
-                                      HttpServletResponse response) {
-        try {
-            return filesService.listFiles(userDetails.getUsername(), path, order, isReverse);
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
-        return null;
+                                      @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        return filesService.listFiles(userDetails.getUsername(), path, order, isReverse);
     }
 
     @ApiOperation(value = "Copy files",
@@ -77,16 +68,8 @@ public class FilesController {
                              @RequestParam(required = true) String pathTo,
                              @RequestParam(required = true) String[] files,
                              @RequestParam(required = false) Boolean isReplaceIfExist,
-                             @AuthenticationPrincipal UserDetails userDetails,
-                             HttpServletResponse response) {
-        try {
-            return filesService.copyFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
-        return 0;
+                             @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        return filesService.copyFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
     }
 
     @ApiOperation(value = "Move files",
@@ -102,16 +85,8 @@ public class FilesController {
                              @RequestParam(required = true) String pathTo,
                              @RequestParam(required = true) String[] files,
                              @RequestParam(required = false) Boolean isReplaceIfExist,
-                             @AuthenticationPrincipal UserDetails userDetails,
-                             HttpServletResponse response) {
-        try {
-            return filesService.moveFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
-        return 0;
+                             @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        return filesService.moveFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
     }
 
     @ApiOperation(value = "Rename file",
@@ -126,15 +101,9 @@ public class FilesController {
                            @RequestParam(required = true) String oldName,
                            @RequestParam(required = true) String newName,
                            @AuthenticationPrincipal UserDetails userDetails,
-                           HttpServletResponse response) {
-        try {
-            filesService.rename(userDetails.getUsername(), path, oldName, newName);
-            response.setStatus(NO_CONTENT.value());
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
+                           HttpServletResponse response) throws IOException {
+        filesService.rename(userDetails.getUsername(), path, oldName, newName);
+        response.setStatus(NO_CONTENT.value());
     }
 
     @ApiOperation(value = "Delete files",
@@ -148,14 +117,8 @@ public class FilesController {
                     produces = TEXT_PLAIN_VALUE)
     public Integer deleteFiles(@RequestParam(required = true) String path,
                                @RequestParam(required = true) String[] files,
-                               @AuthenticationPrincipal UserDetails userDetails,
-                               HttpServletResponse response) {
-        try {
-            return filesService.deleteFiles(userDetails.getUsername(), path, files);
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        }
-        return 0;
+                               @AuthenticationPrincipal UserDetails userDetails) throws FileNotFoundException {
+        return filesService.deleteFiles(userDetails.getUsername(), path, files);
     }
 
     @ApiOperation(value = "Compress files",
@@ -171,15 +134,9 @@ public class FilesController {
                               @RequestParam(required = false) String archiveName,
                               @RequestParam(required = false) String archiveType,
                               @AuthenticationPrincipal UserDetails userDetails,
-                              HttpServletResponse response) {
-        try {
-            filesService.createArchive(userDetails.getUsername(), path, files, archiveName, archiveType);
-            response.setStatus(NO_CONTENT.value());
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
+                              HttpServletResponse response) throws IOException {
+        filesService.createArchive(userDetails.getUsername(), path, files, archiveName, archiveType);
+        response.setStatus(NO_CONTENT.value());
     }
 
     @ApiOperation(value = "Extract files",
@@ -195,19 +152,13 @@ public class FilesController {
                                 @RequestParam(required = true) String archiveType,
                                 @RequestParam(required = false) Boolean extractIntoSubdirectory,
                                 @AuthenticationPrincipal UserDetails userDetails,
-                                HttpServletResponse response) {
-        try {
-            filesService.uncompressArchive(userDetails.getUsername(),
-                                           path,
-                                           archiveName,
-                                           archiveType,
-                                           extractIntoSubdirectory);
-            response.setStatus(NO_CONTENT.value());
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
+                                HttpServletResponse response) throws IOException {
+        filesService.uncompressArchive(userDetails.getUsername(),
+                                       path,
+                                       archiveName,
+                                       archiveType,
+                                       extractIntoSubdirectory);
+        response.setStatus(NO_CONTENT.value());
     }
 
     @ApiOperation(value = "Create directory",
@@ -222,17 +173,9 @@ public class FilesController {
     public void createDirectory(@RequestParam(required = true) String path,
                                 @RequestParam(required = true) String name,
                                 @AuthenticationPrincipal UserDetails userDetails,
-                                HttpServletResponse response) {
-        try {
-            filesService.createDirectory(userDetails.getUsername(), path, name);
-            response.setStatus(NO_CONTENT.value());
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (FileAlreadyExistsException e) {
-            response.setStatus(CONFLICT.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
+                                HttpServletResponse response) throws IOException {
+        filesService.createDirectory(userDetails.getUsername(), path, name);
+        response.setStatus(NO_CONTENT.value());
     }
 
     @ApiOperation(value = "Download file",
@@ -247,14 +190,8 @@ public class FilesController {
     public void downloadFile(@RequestParam(required = true) String path,
                              @RequestParam(required = true) String file,
                              @AuthenticationPrincipal UserDetails userDetails,
-                             HttpServletResponse response) {
-        try {
-            filesService.downloadFile(userDetails.getUsername(), path, file, response);
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
+                             HttpServletResponse response) throws IOException {
+        filesService.downloadFile(userDetails.getUsername(), path, file, response);
     }
 
     @ApiOperation(value = "Download files",
@@ -269,14 +206,8 @@ public class FilesController {
     public void downloadFilesInArchive(@RequestParam(required = true) String path,
                                        @RequestParam(required = true) String[] files,
                                        @AuthenticationPrincipal UserDetails userDetails,
-                                       HttpServletResponse response) {
-        try {
-            filesService.downloadFilesInArchive(userDetails.getUsername(), path, files, response);
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
+                                       HttpServletResponse response) throws IOException {
+        filesService.downloadFilesInArchive(userDetails.getUsername(), path, files, response);
     }
 
     @ApiOperation(value = "Upload file",
@@ -292,15 +223,9 @@ public class FilesController {
                            @RequestParam(required = true) String path,
                            @RequestParam(required = false) String name,
                            @AuthenticationPrincipal UserDetails userDetails,
-                           HttpServletResponse response) {
-        try {
+                           HttpServletResponse response) throws IOException {
             filesService.uploadFile(userDetails.getUsername(), path, name, file);
             response.setStatus(NO_CONTENT.value());
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
     }
 
     @ApiOperation(value = "Upload file structure",
@@ -316,18 +241,8 @@ public class FilesController {
     public void uploadStructure(@RequestParam(required = true) MultipartFile file,
                                 @RequestParam(required = true) String path,
                                 @RequestParam(required = false) Boolean skipSubfolder,
-                                @AuthenticationPrincipal UserDetails userDetails,
-                                HttpServletResponse response) {
-        try {
-            filesService.uploadFileStructure(userDetails.getUsername(), path, file, skipSubfolder);
-            response.setStatus(NO_CONTENT.value());
-        } catch (IllegalArgumentException e) {
-            response.setStatus(BAD_REQUEST.value());
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
+                                @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        filesService.uploadFileStructure(userDetails.getUsername(), path, file, skipSubfolder);
     }
 
     @ApiOperation(value = "Search",
@@ -344,18 +259,8 @@ public class FilesController {
                                        @RequestParam(required = true) String namePattern,
                                        @RequestParam(required = false) Boolean skipSubfolders,
                                        @RequestParam(required = false) Integer maxResults,
-                                       @AuthenticationPrincipal UserDetails userDetails,
-                                       HttpServletResponse response) {
-        try {
-            return filesService.search(userDetails.getUsername(), path, namePattern, skipSubfolders, maxResults);
-        } catch (IllegalArgumentException e) {
-            response.setStatus(BAD_REQUEST.value());
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
-        return null;
+                                       @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        return filesService.search(userDetails.getUsername(), path, namePattern, skipSubfolders, maxResults);
     }
 
     @ApiOperation(value = "Retrieve file info",
@@ -369,16 +274,8 @@ public class FilesController {
                     produces = APPLICATION_JSON_VALUE)
     public FileDetails getDetailedFileInformation(@RequestParam(required = true) String path,
                                                   @RequestParam(required = true) String name,
-                                                  @AuthenticationPrincipal UserDetails userDetails,
-                                                  HttpServletResponse response) {
-        try {
-            return filesService.getDetailedFileInfo(userDetails.getUsername(), path, name);
-        } catch (FileNotFoundException e) {
-            response.setStatus(NOT_FOUND.value());
-        } catch (IOException e) {
-            response.setStatus(INTERNAL_SERVER_ERROR.value());
-        }
-        return null;
+                                                  @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        return filesService.getDetailedFileInfo(userDetails.getUsername(), path, name);
     }
 
 }

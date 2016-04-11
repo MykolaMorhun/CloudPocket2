@@ -1,4 +1,4 @@
-package com.cloudpocket.controller;
+package com.cloudpocket.controller.rest;
 
 import com.cloudpocket.model.User;
 import com.cloudpocket.model.dto.UserDto;
@@ -106,14 +106,8 @@ public class UsersController {
     @RequestMapping(method = RequestMethod.POST,
                     consumes = APPLICATION_JSON_VALUE,
                     produces = APPLICATION_JSON_VALUE)
-    public User addUser(@RequestBody UserDto user,
-                        HttpServletResponse response) {
-        try {
-            return userService.addUser(user);
-        } catch (IOException e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return null;
-        }
+    public User addUser(@RequestBody UserDto user) throws IOException {
+        return userService.addUser(user);
     }
 
     @ApiOperation(value = "Update user data",
@@ -129,14 +123,9 @@ public class UsersController {
                     produces = APPLICATION_JSON_VALUE)
     public User updateUser(@PathVariable Long id,
                            @RequestBody User user,
-                           HttpServletResponse response) {
+                           HttpServletResponse response) throws IOException {
         if (userService.getUserById(id) != null && (user.getId() == id)) {
-            try {
                 return userService.updateUser(user);
-            } catch (IOException e) {
-                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return null;
-            }
         }
         response.setStatus(HttpStatus.CONFLICT.value());
         return null;
