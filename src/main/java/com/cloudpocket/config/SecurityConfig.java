@@ -10,16 +10,21 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final String USER = "USER";
+    private static final String ADMIN = "ADMIN";
 
     @Autowired
     UserService userService;
@@ -29,19 +34,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
             .authorizeRequests()
-                .antMatchers("/api/**").fullyAuthenticated()
-                /*.antMatchers("/api/**").hasRole("user")
-                /*.antMatchers("/api/users/**").hasRole("admin")
-                //.antMatchers("/api/user/**").access("hasRole('admin') and hasRole('user')")
-                .antMatchers("/api/user/**").hasRole("user")
-                .antMatchers("/api/files/**").hasRole("user")
-                .antMatchers("/api/storage/**").hasRole("user")
-                //.antMatchers("/storage**").fullyAuthenticated()*/
-                //.antMatchers("/api/version").permitAll()
+                .antMatchers("/api/users/**").hasAuthority(ADMIN)
+                .antMatchers("/api/user/**").hasAuthority(USER)
+                .antMatchers("/api/files/**").hasAuthority(USER)
+                .antMatchers("/storage/**").hasAuthority(USER)
+                .antMatchers("/view/**").hasAuthority(USER)
+                .antMatchers("/api/version").permitAll()
             .and().formLogin().loginPage("/login")
                 .usernameParameter("login").passwordParameter("password").defaultSuccessUrl("/storage")
             .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login")
-                .invalidateHttpSession(true).addLogoutHandler(new CookieClearingLogoutHandler());
+                .invalidateHttpSession(true);
     }
 
     @Override
@@ -61,13 +63,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 com.cloudpocket.model.User user = userService.getUserByLogin(username);
                 if (user != null) {
+                    List<GrantedAuthority> roles;
                     if (user.getId() != 1) {
-                        return new User(user.getLogin(), user.getPasswordHash(),
-                                AuthorityUtils.createAuthorityList("user"));
+                        roles = AuthorityUtils.createAuthorityList(USER);
                     } else {
-                        return new User(user.getLogin(), user.getPasswordHash(),
-                                AuthorityUtils.createAuthorityList("admin"));
+                        roles = AuthorityUtils.createAuthorityList(ADMIN, USER);
                     }
+                    return new User(user.getLogin(), user.getPasswordHash(), roles);
                 } else {
                     throw new UsernameNotFoundException("Could not find the user '" + username + "'");
                 }
