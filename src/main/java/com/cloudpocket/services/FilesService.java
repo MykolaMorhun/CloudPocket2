@@ -363,7 +363,7 @@ public class FilesService {
      * @param file
      *         archive with file structure
      * @param skipSubfolder
-     *         if {@code false} than save file structure directly in the specified directory
+     *         if {@code false} then save file structure directly in the specified directory
      * @throws IOException
      */
     public void uploadFileStructure(String login, String path, MultipartFile file, Boolean skipSubfolder)
@@ -392,12 +392,12 @@ public class FilesService {
      *         Must be at least 3 symbols long.
      *         Just part of a file name is correct.
      * @param skipSubfolders
-     *         if {@code false} than search for files and directories
+     *         if {@code false} then search for files and directories
      *         exactly inside given directory, no recursive search.
      *         {@code false} by default.
      * @param maxResults
      *         maximal number of results.
-     *         If it exceed than search stops and returns result.
+     *         If it exceed then search stops and returns result.
      *         Returns no more than 50 results by default.
      * @return search results
      * @throws FileNotFoundException

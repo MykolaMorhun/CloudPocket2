@@ -8,6 +8,14 @@
 </head>
 <body>
     <div th:replace="/snippets/welcome_menu :: menu"></div>
+
+    <div th:unless="${param.error == null}">
+        <div class="alert alert-danger fade in text-center">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            Wrong login or password
+        </div>
+    </div>
+
     <div class="container form" id="login_form">
         <form class="form-horizontal" role="form" th:action="@{/login}" method="POST">
             <div class="form-group">

@@ -9,6 +9,14 @@
 </head>
 <body>
     <div th:replace="/snippets/welcome_menu :: menu"></div>
+
+    <div th:unless="${param.error == null}">
+        <div class="alert alert-danger fade in text-center">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <span th:text="${param.error[0]}">Error</span>
+        </div>
+    </div>
+
     <div class="container form" id="register_form">
         <form class="form-horizontal" role="form" method="POST">
             <div class="form-group">
@@ -26,13 +34,13 @@
             <div class="form-group">
                 <label class="control-label col-xs-2" for="confirm-password">Confirm password:</label>
                 <div class="col-xs-10">
-                    <input type="password" class="form-control" id="confirm-password" name="cofirm-password" required="" placeholder="Confirm your password"/>
+                    <input type="password" class="form-control" id="confirm-password" required="" placeholder="Confirm your password"/>
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-xs-2" for="email">E-mail:</label>
                 <div class="col-xs-10">
-                    <input type="email" class="form-control" id="email" required="" placeholder="Your e-mail"/>
+                    <input type="email" class="form-control" id="email" name="email" required="" placeholder="Your e-mail"/>
                 </div>
             </div>
             <div class="form-group">

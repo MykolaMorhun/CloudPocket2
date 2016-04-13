@@ -226,7 +226,7 @@ public class FSUtils {
      *         Just part of a file name is correct.
      * @param maxResults
      *         maximal number of results.
-     *         If it exceed than search stops and returns result.
+     *         If it exceed then search stops and returns result.
      * @return search results
      * @throws IOException
      *         if errors occurs while reading file system

@@ -1,5 +1,6 @@
 package com.cloudpocket.services;
 
+import com.cloudpocket.exceptions.UserAlreadyExistException;
 import com.cloudpocket.model.User;
 import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.repository.UserRepository;
@@ -69,10 +70,12 @@ public class UserService {
      * @return data about just created user
      * @throws IOException
      *         if error occurs while creating user's home directory
+     * @throws UserAlreadyExistException
+     *         if user with given login already exists
      */
     public User addUser(UserDto newUserInfo) throws IOException {
         if (repository.findUserByLogin(newUserInfo.getLogin()) != null) {
-            throw new RuntimeException();
+            throw new UserAlreadyExistException();
         }
 
         Path userHomeDir = Paths.get(PATH_TO_STORAGE, newUserInfo.getLogin());

@@ -23,7 +23,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String USER = "USER";
+    public static final String USER = "USER";
     private static final String ADMIN = "ADMIN";
 
     @Autowired
