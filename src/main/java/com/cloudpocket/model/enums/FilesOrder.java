@@ -12,7 +12,7 @@ public enum FilesOrder {
     public static FilesOrder thisOrDefault(String sortOrder) {
         FilesOrder order;
         try {
-            order = valueOf(sortOrder);
+            order = valueOf(sortOrder.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
             order = NAME;
         }

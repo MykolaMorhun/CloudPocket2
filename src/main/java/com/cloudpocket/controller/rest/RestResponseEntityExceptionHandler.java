@@ -37,7 +37,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(value = FileNotFoundException.class)
     protected ResponseEntity<Object> handleNotFound(FileNotFoundException e) {
-        return new ResponseEntity<>(new ErrorResponseDto(FORBIDDEN), NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponseDto(NOT_FOUND), NOT_FOUND);
     }
 
     @ExceptionHandler(value = FileAlreadyExistsException.class)
