@@ -222,7 +222,9 @@ public class FSUtils {
      * @param absolutePath
      *         absolute path to directory to search in
      * @param namePattern
-     *         regex for match files and directories.
+     *         pattern for match files and directories.
+     *          ? means any character,
+     *          * means any set of characters.
      *         Just part of a file name is correct.
      * @param maxResults
      *         maximal number of results.
@@ -238,7 +240,12 @@ public class FSUtils {
         }
 
         Map<Path, FileDto> foundFiles = new HashMap<>();
+
+        namePattern = namePattern.replace(".", "\\.")  // . -> \.  - dot char
+                                 .replace('?', '.')    // ? -> .   - any char
+                                 .replace("*", ".*");  // * -> .*  - any set of chars
         Pattern pattern = Pattern.compile(namePattern);
+
         Files.walkFileTree(absolutePath, new SimpleFileVisitor<Path>() {
             private int resultsCounter = 0;
 

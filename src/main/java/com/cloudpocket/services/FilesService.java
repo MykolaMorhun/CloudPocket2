@@ -394,7 +394,7 @@ public class FilesService {
                                        Boolean skipSubfolders,
                                        Integer maxResults) throws IOException {
         if (namePattern == null || namePattern.length() < 3) {
-            throw new IllegalArgumentException("name pattren");
+            throw new IllegalArgumentException("name pattern");
         }
         if (maxResults != null) {
             if (maxResults < 1 || maxResults > SEARCH_MAX_RESULTS) {
