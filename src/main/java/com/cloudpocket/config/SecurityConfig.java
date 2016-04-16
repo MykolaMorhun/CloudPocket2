@@ -34,9 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
             .authorizeRequests()
-                .antMatchers("/api/users/**").hasAuthority(ADMIN)
-                .antMatchers("/api/user/**").hasAuthority(USER)
-                .antMatchers("/api/files/**").hasAuthority(USER)
+                .antMatchers("/api/admin/**").hasAuthority(ADMIN)
+                .antMatchers("/api/**").hasAuthority(USER)
                 .antMatchers("/storage/**").hasAuthority(USER)
                 .antMatchers("/view/**").hasAuthority(USER)
                 .antMatchers("/api/version").permitAll()
@@ -64,10 +63,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 com.cloudpocket.model.User user = userService.getUserByLogin(username);
                 if (user != null) {
                     List<GrantedAuthority> roles;
-                    if (user.getId() != 1) {
-                        roles = AuthorityUtils.createAuthorityList(USER);
-                    } else {
+                    if (user.isAdmin() || user.getId() == 1) {
                         roles = AuthorityUtils.createAuthorityList(ADMIN, USER);
+                    } else {
+                        roles = AuthorityUtils.createAuthorityList(USER);
                     }
                     return new User(user.getLogin(), user.getPasswordHash(), roles);
                 } else {

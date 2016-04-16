@@ -22,7 +22,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * Exception handling controller for REST API
  */
 @ControllerAdvice(annotations = RestController.class)
-@RestController
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = IllegalArgumentException.class)

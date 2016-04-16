@@ -37,7 +37,6 @@ public class UserController {
 
     @ApiOperation(value = "Get information about user",
                   notes = "Gets information about current user")
-    @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "") })
@@ -46,13 +45,12 @@ public class UserController {
     public UserDto getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
         User fullUserInfo = userService.getUserByLogin(userDetails.getUsername());
         return new UserDto().withLogin(fullUserInfo.getLogin())
-                            .withPassword(fullUserInfo.getPasswordHash())
+                            .withPassword("<hidden>")
                             .withEmail(fullUserInfo.getEmail());
     }
 
     @ApiOperation(value = "Update user",
                   notes = "Updates user profile")
-    @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "Update success") })
@@ -69,7 +67,6 @@ public class UserController {
 
     @ApiOperation(value = "Delete user",
                   notes = "Deletes user's account. User details is used as confirmation")
-    @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "Deletion success") })
@@ -87,7 +84,6 @@ public class UserController {
 
     @ApiOperation(value = "Get user registration date",
                   notes = "Gets date of user registration in the format: 'dd.MM.yyyy hh:mm:ss'")
-    @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "") })

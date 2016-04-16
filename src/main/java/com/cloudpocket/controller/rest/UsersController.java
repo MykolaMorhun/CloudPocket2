@@ -30,14 +30,13 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
  */
 @Api(basePath = "/api/users", value = "Users controller", description = "Operations with users")
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/admin/users")
 public class UsersController {
     @Autowired
     private UserService userService;
 
     @ApiOperation(value = "Get users info",
                   notes = "Gets detailed information about users")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "OK") })
@@ -49,8 +48,7 @@ public class UsersController {
     }
 
     @ApiOperation(value = "Get users info",
-            notes = "Gets detailed information about all users")
-    @ResponseStatus(OK)
+                  notes = "Gets detailed information about all users")
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "OK") })
@@ -60,9 +58,19 @@ public class UsersController {
         return userService.getAllUsers();
     }
 
+    @ApiOperation(value = "Get admins info",
+                  notes = "List all users with admin privileges")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(value = "/admins/all", method = RequestMethod.GET,
+                    produces = APPLICATION_JSON_VALUE)
+    public List<User> getAdmins() {
+        return userService.getAllAdmins();
+    }
+
     @ApiOperation(value = "Count users",
                   notes = "Gets total number of service users")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "OK") })
@@ -74,7 +82,6 @@ public class UsersController {
 
     @ApiOperation(value = "Get user info",
                   notes = "Gets detailed information about user")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "OK") })
@@ -86,7 +93,6 @@ public class UsersController {
 
     @ApiOperation(value = "Get user info",
                   notes = "Gets detailed information about user")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "OK") })
@@ -98,7 +104,6 @@ public class UsersController {
 
     @ApiOperation(value = "Add new user",
                   notes = "Add new user to the service")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 500, message = "Internal server error"),
@@ -112,7 +117,6 @@ public class UsersController {
 
     @ApiOperation(value = "Update user data",
                   notes = "Updates all user data except id")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 409, message = "Illegal operation with user"),
@@ -133,7 +137,6 @@ public class UsersController {
 
     @ApiOperation(value = "Delete user",
                   notes = "Deletes user and his data from the service")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "OK") })
@@ -144,7 +147,6 @@ public class UsersController {
 
     @ApiOperation(value = "Delete user",
                   notes = "Deletes user and his data from the service")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 200, message = "OK") })

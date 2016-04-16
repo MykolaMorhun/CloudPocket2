@@ -41,7 +41,6 @@ public class FilesController {
 
     @ApiOperation(value = "List files",
                   notes = "Gets list of files with basic information from specified directory")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
@@ -57,7 +56,6 @@ public class FilesController {
 
     @ApiOperation(value = "Copy files",
                   notes = "Copy specified files from one directory to another")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
@@ -74,7 +72,6 @@ public class FilesController {
 
     @ApiOperation(value = "Move files",
                   notes = "Move specified files from one directory to another")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
@@ -90,25 +87,24 @@ public class FilesController {
     }
 
     @ApiOperation(value = "Rename file",
-                  notes = "Rename specified file")
-    @ResponseStatus(NO_CONTENT)
+            notes = "Rename specified file")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 204, message = "OK") })
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/rename", method = RequestMethod.PUT)
     public void renameFile(@RequestParam(required = true) String path,
-                           @RequestParam(required = true) String oldName,
-                           @RequestParam(required = true) String newName,
-                           @AuthenticationPrincipal UserDetails userDetails,
-                           HttpServletResponse response) throws IOException {
+                          @RequestParam(required = true) String oldName,
+                          @RequestParam(required = true) String newName,
+                          @AuthenticationPrincipal UserDetails userDetails,
+                          HttpServletResponse response) throws IOException {
         filesService.rename(userDetails.getUsername(), path, oldName, newName);
-        response.setStatus(NO_CONTENT.value());
+        response.setStatus(NO_CONTENT.value()); // TODO remove, use @ResponseStatus(NO_CONTENT)
     }
 
     @ApiOperation(value = "Delete files",
                   notes = "Deletes specified files and directories")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
@@ -123,11 +119,11 @@ public class FilesController {
 
     @ApiOperation(value = "Compress files",
                   notes = "Creates archive from specified files")
-    @ResponseStatus(NO_CONTENT)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 204, message = "OK") })
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/compress", method = RequestMethod.POST)
     public void compressFiles(@RequestParam(required = true) String path,
                               @RequestParam(required = true) String[] files,
@@ -141,11 +137,11 @@ public class FilesController {
 
     @ApiOperation(value = "Extract files",
                   notes = "Extract files from specified archive")
-    @ResponseStatus(NO_CONTENT)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 204, message = "OK") })
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/uncompress", method = RequestMethod.POST)
     public void uncompressFiles(@RequestParam(required = true) String path,
                                 @RequestParam(required = true) String archiveName,
@@ -163,7 +159,6 @@ public class FilesController {
 
     @ApiOperation(value = "Create directory",
                   notes = "Creates directory in specified location")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 409, message = "Folder already exist"),
@@ -180,7 +175,6 @@ public class FilesController {
 
     @ApiOperation(value = "Download file",
                   notes = "Gives to user download specified file")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
@@ -196,7 +190,6 @@ public class FilesController {
 
     @ApiOperation(value = "Download files",
                   notes = "Gives to user download archive with specified files")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
@@ -212,7 +205,6 @@ public class FilesController {
 
     @ApiOperation(value = "Upload file",
                   notes = "Saves file received from user")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
@@ -230,12 +222,12 @@ public class FilesController {
 
     @ApiOperation(value = "Upload file structure",
                   notes = "Saves file tree from archive")
-    @ResponseStatus(NO_CONTENT)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad archive"),
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 204, message = "OK") })
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/upload/structure", method = RequestMethod.POST,
                     consumes = MULTIPART_FORM_DATA_VALUE)
     public void uploadStructure(@RequestParam(required = true) MultipartFile file,
@@ -247,7 +239,6 @@ public class FilesController {
 
     @ApiOperation(value = "Search",
                   notes = "Search for files and folders")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Invalid parameter"),
             @ApiResponse(code = 404, message = "Not found"),
@@ -265,7 +256,6 @@ public class FilesController {
 
     @ApiOperation(value = "Retrieve file info",
                   notes = "Retrieves detailed information about specified file")
-    @ResponseStatus(OK)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),

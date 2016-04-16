@@ -25,7 +25,6 @@ public class HandshakeController {
     private String apiVersion;
 
     @ApiOperation(value = "CloudPocket API version", notes = "Gets information about application API")
-    @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Internal server error"),
             @ApiResponse(code = 200, message = "") })

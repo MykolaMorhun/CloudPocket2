@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Describes user of the service
+ * Describes user of the application.
  */
 @Entity
 @Table(name = "users")
@@ -25,6 +25,9 @@ public class User {
 
     @Column
     private Timestamp joinDate;
+
+    @Column
+    private Boolean admin;
 
     public long getId() {
         return id;
@@ -64,6 +67,14 @@ public class User {
 
     public void setJoinDate(Timestamp joinDate) {
         this.joinDate = joinDate;
+    }
+
+    public Boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
 }

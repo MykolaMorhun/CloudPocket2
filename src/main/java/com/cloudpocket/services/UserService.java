@@ -48,6 +48,10 @@ public class UserService {
         return repository.findAll(pageable).getContent();
     }
 
+    public List<User> getAllAdmins() {
+        return repository.findByAdmin(true);
+    }
+
     public Long countUsers() {
         return repository.count();
     }
@@ -89,6 +93,7 @@ public class UserService {
         user.setEmail(newUserInfo.getEmail());
         user.setPasswordHash(md5Encoder.encodePassword(newUserInfo.getPassword(), null));
         user.setJoinDate(new Timestamp(new Date().getTime()));
+        user.setAdmin(false);
 
         return repository.saveAndFlush(user);
     }
@@ -124,6 +129,9 @@ public class UserService {
         }
         if (user.getJoinDate() == null) {
             user.setJoinDate(oldUserData.getJoinDate());
+        }
+        if (user.isAdmin() == null) {
+            user.setAdmin(oldUserData.isAdmin());
         }
 
         return repository.saveAndFlush(user);

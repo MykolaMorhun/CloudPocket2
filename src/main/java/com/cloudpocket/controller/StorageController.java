@@ -2,6 +2,8 @@ package com.cloudpocket.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,14 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.security.RolesAllowed;
 
 /**
- * Controller
+ * Controller for file manager.
  */
-@RestController
+@Controller
 @RequestMapping("/storage")
 public class StorageController {
 
+    @ModelAttribute("login")
+    public String getUserLogin(@AuthenticationPrincipal UserDetails userDetails) {
+        return userDetails.getUsername();
+    }
+
     @RequestMapping(method = RequestMethod.GET)
-    public String listDirectory(@AuthenticationPrincipal UserDetails userDetails) {
+    public String openFileManager() {
         return "storage";
     }
 
