@@ -177,7 +177,7 @@ public class FilesService {
      *         name of files and directories
      * @param archiveName
      *         name of the archive
-     * @param archiveTypeString
+     * @param archiveType
      *         type of the archive, e.g. 'ZIP', 'RAR' etc.
      * @return number of added items (subdirectories and files in them, do not counts)
      * @throws IOException
@@ -189,16 +189,15 @@ public class FilesService {
                              String path,
                              String[] files,
                              String archiveName,
-                             String archiveTypeString) throws IOException {
+                             ArchiveType archiveType) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
         if (archiveName == null) {
             archiveName = new Date().toString();
         }
-        if (archiveTypeString == null) {
-            archiveTypeString = "ZIP";
+        if (archiveType == null) {
+            archiveType = ArchiveType.ZIP;
         }
-        ArchiveType archiveType = ArchiveType.valueOf(archiveTypeString);
         switch (archiveType) {
             case ZIP:
                 return ZipUtils.zip(absolutePath, files, archiveName);
@@ -218,7 +217,7 @@ public class FilesService {
      *         absolute path to directory, where the archive is located
      * @param archiveName
      *         name of the archive to uncompress
-     * @param archiveTypeString
+     * @param archiveType
      *         type of the archive, e.g. 'ZIP', 'RAR' etc.
      *         (for now only 'zip' is supported)
      * @param extractIntoSubdirectory
@@ -231,14 +230,13 @@ public class FilesService {
     public void uncompressArchive(String login,
                                   String path,
                                   String archiveName,
-                                  String archiveTypeString,
+                                  ArchiveType archiveType,
                                   Boolean extractIntoSubdirectory) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
-        if (archiveTypeString == null) {
-            archiveTypeString = "ZIP";
+        if (archiveType == null) {
+            archiveType = ArchiveType.ZIP;
         }
-        ArchiveType archiveType = ArchiveType.valueOf(archiveTypeString);
         switch (archiveType) {
             case ZIP:
                 ZipUtils.unzip(absolutePath, archiveName, firstIfNotNull(extractIntoSubdirectory, true));

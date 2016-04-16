@@ -17,6 +17,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 /**
  * Exception handling controller for REST API
@@ -42,6 +43,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = FileAlreadyExistsException.class)
     protected ResponseEntity<Object> handleConflict(FileAlreadyExistsException e) {
         return new ResponseEntity<>(new ErrorResponseDto(CONFLICT), CONFLICT);
+    }
+
+    protected ResponseEntity<Object> handleUnsupportedOperationException(UnsupportedOperationException e) {
+        return new ResponseEntity<>(new ErrorResponseDto(UNSUPPORTED_MEDIA_TYPE), UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ExceptionHandler(value = IOException.class)
