@@ -24,6 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -189,7 +192,11 @@ public class FilesController {
                              @RequestParam(required = true) String file,
                              @AuthenticationPrincipal UserDetails userDetails,
                              HttpServletResponse response) throws IOException {
-        filesService.downloadFile(userDetails.getUsername(), path, file, response);
+        Path pathToFile = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, file);
+        response.setContentType(Files.probeContentType(pathToFile));
+        response.setHeader("Content-disposition", "attachment; filename=\"" + pathToFile.getFileName() + "\"");
+        response.setContentLengthLong(Files.size(pathToFile));
+        filesService.downloadFile(pathToFile, response.getOutputStream());
     }
 
     @ApiOperation(value = "Download files",
@@ -204,7 +211,9 @@ public class FilesController {
                                        @RequestParam(required = true) String[] files,
                                        @AuthenticationPrincipal UserDetails userDetails,
                                        HttpServletResponse response) throws IOException {
-        filesService.downloadFilesInArchive(userDetails.getUsername(), path, files, response);
+        response.setContentType("application/zip");
+        response.setHeader("Content-disposition", "attachment; filename=\"" + new Date() + ".zip\"");
+        filesService.downloadFilesInArchive(userDetails.getUsername(), path, files, response.getOutputStream());
     }
 
     @ApiOperation(value = "Upload file",
@@ -219,9 +228,8 @@ public class FilesController {
     public void uploadFile(@RequestParam(required = true) MultipartFile file,
                            @RequestParam(required = true) String path,
                            @RequestParam(required = false) String name,
-                           @AuthenticationPrincipal UserDetails userDetails,
-                           HttpServletResponse response) throws IOException {
-            filesService.uploadFile(userDetails.getUsername(), path, name, file);
+                           @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        filesService.uploadFile(userDetails.getUsername(), path, name, file);
     }
 
     @ApiOperation(value = "Upload file structure",

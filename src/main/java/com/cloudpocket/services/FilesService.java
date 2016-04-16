@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -273,31 +275,17 @@ public class FilesService {
      * Sends file to user.
      * I.e. user download this file.
      *
-     * @param login
-     *         user's login
-     * @param path
-     *         absolute path to directory in which file is located
-     * @param file
-     *         file to download
-     * @param response
-     *         http servlet response
+     * @param pathToFile
+     *         absolute path to file for download
+     * @param outputStream
+     *         stream to write file to
      * @throws IOException
      * @throws FileNotFoundException
      *         if file to download doesn't exist
      *         or directory which must contains the file doesn't exist
      */
-    public void downloadFile(String login, String path, String file, HttpServletResponse response) throws IOException {
-        Path absolutePath = getAbsolutePath(login, path);
-
-        Path pathToFile = absolutePath.resolve(file);
-        if (Files.exists(pathToFile)) {
-            response.setContentType(Files.probeContentType(pathToFile));
-            response.setHeader("Content-disposition", "attachment; filename=\"" + pathToFile.getFileName() + "\"");
-            response.setContentLengthLong(Files.size(pathToFile));
-            StreamUtils.writeFileToOutputStream(pathToFile, response.getOutputStream());
-        } else {
-            throw new FileNotFoundException();
-        }
+    public void downloadFile(Path pathToFile, OutputStream outputStream) throws IOException {
+        StreamUtils.writeFileToOutputStream(pathToFile, outputStream);
     }
 
     /**
@@ -309,22 +297,19 @@ public class FilesService {
      *         absolute path to directory in which files are located
      * @param files
      *         list of file to download
-     * @param response
-     *         http servlet response
+     * @param outputStream
+     *         stream for write
      * @throws IOException
      */
     public void downloadFilesInArchive(String login,
                                        String path,
                                        String[] files,
-                                       HttpServletResponse response) throws IOException {
+                                       OutputStream outputStream) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
-        String archiveName = String.valueOf(new Date().getTime());
+        String archiveName = new Date().toString();
         ZipUtils.zip(absolutePath, files, archiveName);
         Path pathToArchive = absolutePath.resolve(archiveName);
-        response.setContentType("application/zip");
-        response.setHeader("Content-disposition", "attachment; filename=\"" + archiveName + ".zip\"");
-        response.setContentLengthLong(Files.size(pathToArchive));
-        StreamUtils.writeFileToOutputStream(pathToArchive, response.getOutputStream());
+        StreamUtils.writeFileToOutputStream(pathToArchive, outputStream);
         FSUtils.delete(pathToArchive);
     }
 
@@ -459,6 +444,28 @@ public class FilesService {
             fileDetails.setOwner(login);
             fileDetails.setPath(getPathInsideUserHomeDirectory(Paths.get(fileDetails.getPath()), login));
             return fileDetails;
+        }
+        throw new FileNotFoundException();
+    }
+
+    /**
+     * Returns absolute path to user's file.
+     * File must exists.
+     *
+     * @param login
+     *         user's login
+     * @param path
+     *         absolute path inside user's home directory
+     * @param filename
+     *         name of file
+     * @return absolute path on server's file system to specified file
+     * @throws FileNotFoundException
+     *         if specified files doesn't exist
+     */
+    public Path getAbsolutePathToFile(String login, String path, String filename) throws FileNotFoundException {
+        Path pathToFile = getAbsolutePath(login, path).resolve(filename);
+        if (Files.exists(pathToFile)) {
+            return pathToFile;
         }
         throw new FileNotFoundException();
     }
