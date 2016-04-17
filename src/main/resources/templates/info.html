@@ -4,15 +4,27 @@
 <head>
     <include th:replace="/snippets/headinclude"/>
     <title>About Cloud Pocket</title>
+
+    <link th:href="@{/css/welcome.css}" rel="stylesheet"/>
 </head>
 <body>
     <div th:replace="/snippets/welcome_menu :: menu"></div>
-    <div class="center-block text-center">
+    <div class="center-block text-center info-text">
         <p>
-            Some info about Cloud Pocket
+            Easy to start and use
         </p>
         <p>
-            Another advantage of Cloud Pocket
+            No redundant information for begin and use needed<br/>
+            Only your email (for case when your forget your password)
+        </p>
+        <p>
+            Password strength only on your choose
+        </p>
+        <p>
+            Now Cloud Pocket has REST API<br/>
+        </p>
+        <p>
+            And many new features
         </p>
     </div>
     <div th:replace="/snippets/common :: footer"></div>

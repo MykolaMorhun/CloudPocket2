@@ -4,15 +4,17 @@
 <head>
     <include th:replace="/snippets/headinclude"/>
     <title>Welcome to Cloud Pocket</title>
+
+    <link th:href="@{/css/welcome.css}" rel="stylesheet"/>
 </head>
 <body>
     <div th:replace="/snippets/welcome_menu :: menu"></div>
     <div class="container">
-        <h2 class="text-primary text-center">
-            <div th:replace="/snippets/common :: banner"></div>
+        <div th:replace="/snippets/common :: banner"></div>
+        <div class="welcome-main-text text-center">
             <br/>Cloud Pocket is service for store your files.
             <br/>Access your files from everywhere!
-        </h2>
+        </div>
     </div>
     <div th:replace="/snippets/common :: footer"></div>
 </body>
