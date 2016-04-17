@@ -1,5 +1,6 @@
 package com.cloudpocket.services;
 
+import com.cloudpocket.exceptions.ForbiddenException;
 import com.cloudpocket.model.FileDetails;
 import com.cloudpocket.model.enums.ArchiveType;
 import com.cloudpocket.model.dto.FileDto;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -461,13 +460,11 @@ public class FilesService {
      * @return absolute path on server's file system to specified file
      * @throws FileNotFoundException
      *         if specified files doesn't exist
+     * @throws ForbiddenException
+     *         if path exits from user's home directory
      */
     public Path getAbsolutePathToFile(String login, String path, String filename) throws FileNotFoundException {
-        Path pathToFile = getAbsolutePath(login, path).resolve(filename);
-        if (Files.exists(pathToFile)) {
-            return pathToFile;
-        }
-        throw new FileNotFoundException();
+        return getAbsolutePath(login, path + '/' + filename);
     }
 
     /**
@@ -480,9 +477,11 @@ public class FilesService {
      * @return absolute path on server's file system
      * @throws FileNotFoundException
      *         if path does not exist
+     * @throws ForbiddenException
+     *         if path exits from user's home directory. E.g. "userhome/../../"
      */
     private Path getAbsolutePath(String login, String path) throws FileNotFoundException {
-        Path absolutePath = Paths.get(PATH_TO_STORAGE, login, path);
+        Path absolutePath = pathInsideUserHomeDirectory(login, path);
         if (! Files.exists(absolutePath)) {
             throw new FileNotFoundException("Wrong path");
         }
@@ -502,6 +501,27 @@ public class FilesService {
      */
     private String getPathInsideUserHomeDirectory(Path absolutePath, String login) {
         return "/" + Paths.get(PATH_TO_STORAGE, login).relativize(absolutePath).toString();
+    }
+
+    /**
+     * Checks that absolute path points to a item inside user's home directory.
+     * If it false, then {@link ForbiddenException} will be thrown.
+     *
+     * @param login
+     *         user's login
+     * @param path
+     *         absolute path inside user home directory
+     * @return absolute path on server's file system to given in {@code path} parameter item
+     * @throws ForbiddenException
+     *         if path exits from user's home directory. E.g. "path/userhome/../"
+     */
+    private Path pathInsideUserHomeDirectory(String login, String path) {
+        Path userHomeDir = Paths.get(PATH_TO_STORAGE, login);
+        Path absolutePath = Paths.get(PATH_TO_STORAGE + '/' + login + path).normalize();
+        if (! absolutePath.startsWith(userHomeDir)) {
+            throw new ForbiddenException();
+        }
+        return absolutePath;
     }
 
 }
