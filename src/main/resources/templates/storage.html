@@ -1,0 +1,18 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <include th:replace="/snippets/headinclude"/>
+    <title>Welcome to Cloud Pocket</title>
+
+    <link th:href="@{/css/storage.css}" rel="stylesheet"/>
+</head>
+<body>
+    <div th:replace="/snippets/toolbar :: toolbar"></div>
+    <div th:replace="/snippets/toolbar :: pathbar"></div>
+    <div class="container">
+
+    </div>
+    <div th:replace="/snippets/common :: footer"></div>
+</body>
+</html>
