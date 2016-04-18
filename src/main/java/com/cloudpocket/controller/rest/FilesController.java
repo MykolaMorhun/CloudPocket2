@@ -30,7 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -134,8 +135,8 @@ public class FilesController {
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 204, message = "OK") })
-    @ResponseStatus(NO_CONTENT)
+            @ApiResponse(code = 201, message = "OK") })
+    @ResponseStatus(CREATED)
     @RequestMapping(value = "/compress", method = RequestMethod.POST)
     public void compressFiles(@RequestParam(required = true) String path,
                               @RequestParam(required = true) String[] files,
@@ -150,8 +151,8 @@ public class FilesController {
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 204, message = "OK") })
-    @ResponseStatus(NO_CONTENT)
+            @ApiResponse(code = 201, message = "OK") })
+    @ResponseStatus(CREATED)
     @RequestMapping(value = "/uncompress", method = RequestMethod.POST)
     public void uncompressFiles(@RequestParam(required = true) String path,
                                 @RequestParam(required = true) String archiveName,
@@ -171,8 +172,8 @@ public class FilesController {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 409, message = "Folder already exist"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 204, message = "OK") })
-    @ResponseStatus(NO_CONTENT)
+            @ApiResponse(code = 201, message = "OK") })
+    @ResponseStatus(CREATED)
     @RequestMapping(value = "/create/folder", method = RequestMethod.POST)
     public void createDirectory(@RequestParam(required = true) String path,
                                 @RequestParam(required = true) String name,
@@ -221,8 +222,8 @@ public class FilesController {
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 204, message = "OK") })
-    @ResponseStatus(NO_CONTENT)
+            @ApiResponse(code = 201, message = "OK") })
+    @ResponseStatus(CREATED)
     @RequestMapping(value = "/upload/file", method = RequestMethod.POST,
                     consumes = "multipart/form-data")
     public void uploadFile(@RequestParam(required = true) MultipartFile file,
@@ -238,8 +239,8 @@ public class FilesController {
             @ApiResponse(code = 400, message = "Bad archive"),
             @ApiResponse(code = 404, message = "Not found"),
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 204, message = "OK") })
-    @ResponseStatus(NO_CONTENT)
+            @ApiResponse(code = 201, message = "OK") })
+    @ResponseStatus(CREATED)
     @RequestMapping(value = "/upload/structure", method = RequestMethod.POST,
                     consumes = MULTIPART_FORM_DATA_VALUE)
     public void uploadStructure(@RequestParam(required = true) MultipartFile file,
