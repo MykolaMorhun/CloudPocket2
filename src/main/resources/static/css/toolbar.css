@@ -40,6 +40,7 @@
 
 #path-bar {
     align-items: center;
+    margin-top: 55px;
 }
 
 #current-path-input {

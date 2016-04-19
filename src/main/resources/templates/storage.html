@@ -3,15 +3,19 @@
       lang="en">
 <head>
     <include th:replace="/snippets/headinclude"/>
-    <title>Welcome to Cloud Pocket</title>
+    <title th:text="${login + ' - Cloud Pocket'}">Cloud Pocket</title>
 
     <link th:href="@{/css/storage.css}" rel="stylesheet"/>
+
+    <script th:src="@{/scripts/app/app.js}"></script>
+    <script th:src="@{/scripts/app/app_templates.js}"></script>
+    <script th:src="@{/scripts/app/cloud_pocket_client.js}"></script>
 </head>
 <body>
     <div th:replace="/snippets/toolbar :: toolbar"></div>
     <div th:replace="/snippets/toolbar :: pathbar"></div>
     <div class="container">
-
+        <div th:replace="/snippets/files_table :: files_table"></div>
     </div>
     <div th:replace="/snippets/common :: footer"></div>
 </body>

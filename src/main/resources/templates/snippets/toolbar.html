@@ -4,88 +4,87 @@
 <head>
 </head>
 <body>
-    <div th:fragment="toolbar" class="navbar navbar-default">
+    <div th:fragment="toolbar" class="navbar navbar-default navbar-fixed-top">
         <link th:href="@{/css/welcome_menu.css}" rel="stylesheet"/>
         <link th:href="@{/css/toolbar.css}" rel="stylesheet"/>
-        <div class="container">
-            <div class="container-fluid navbar-fixed-top">
-                <div class="navbar-header">
-                    <img src="/images/logo.png" id="menu_logo" class="pull-left" height="35"/>
-                    <span class="navbar-brand" th:text="${login}">Cloud Pocket</span>
-                </div>
-                <div class="collapse navbar-collapse" id="toolbar-menu-navbar">
-                    <ul class="nav navbar-nav">
-                        <li id="btn-home">
-                            <img class="tool-button " src="/images/buttons/home_dir.png"/>
-                        </li>
-                        <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
-                        <li id="btn-copy">
-                            <img class="tool-button " src="/images/buttons/copy.png"/>
-                        </li>
-                        <li id="btn-cut">
-                            <img class="tool-button" src="/images/buttons/cut.png"/>
-                        </li>
-                        <li id="btn-paste">
-                            <img class="tool-button" src="/images/buttons/paste.png"/>
-                        </li>
-                        <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
-                        <li id="btn-download">
-                            <img class="tool-button" src="/images/buttons/download.png"/>
-                        </li>
-                        <li id="btn-delete">
-                            <img class="tool-button" src="/images/buttons/delete.png"/>
-                        </li>
-                        <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
-                        <li id="btn-compress">
-                            <img class="tool-button" src="/images/buttons/compress.png"/>
-                        </li>
-                        <li id="btn-uncompress">
-                            <img class="tool-button" src="/images/buttons/uncompress.png"/>
-                        </li>
-                        <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
-                        <li id="btn-rename">
-                            <img class="tool-button" src="/images/buttons/rename.png"/>
-                        </li>
-                        <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
-                        <li id="btn-add_file">
-                            <img class="tool-button " src="/images/buttons/add_file.png"/>
-                        </li>
-                        <li id="btn-add_folder">
-                            <img class="tool-button" src="/images/buttons/add_folder.png"/>
-                        </li>
-                        <li id="btn-add_structure">
-                            <img class="tool-button" src="/images/buttons/add_archive.png"/>
-                        </li>
-                        <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
-                        <li>
-                            <input type="text" id="search-input"/>
-                        </li>
-                        <li id="btn-search">
-                            <img class="tool-button" src="/images/buttons/search.png"/>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li id="btn-user_profile">
-                            <img class="tool-button" src="/images/buttons/user_profile.png"/>
-                        </li>
-                        <li id="btn-logout">
-                            <img class="tool-button" src="/images/buttons/logout.png"/>
-                        </li>
-                    </ul>
-                </div>
+        <script th:src="@{/scripts/app/toolbar.js}"></script>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <img src="/images/logo.png" id="menu_logo" class="pull-left" height="35"/>
+                <span class="navbar-brand" th:text="${login}">Cloud Pocket</span>
+            </div>
+            <div class="collapse navbar-collapse" id="toolbar-menu-navbar">
+                <ul class="nav navbar-nav">
+                    <li id="btn-home">
+                        <img class="tool-button " src="/images/buttons/home_dir.png"/>
+                    </li>
+                    <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
+                    <li id="btn-copy">
+                        <img class="tool-button " src="/images/buttons/copy.png"/>
+                    </li>
+                    <li id="btn-cut">
+                        <img class="tool-button" src="/images/buttons/cut.png"/>
+                    </li>
+                    <li id="btn-paste">
+                        <img class="tool-button" src="/images/buttons/paste.png"/>
+                    </li>
+                    <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
+                    <li id="btn-download">
+                        <img class="tool-button" src="/images/buttons/download.png"/>
+                    </li>
+                    <li id="btn-delete">
+                        <img class="tool-button" src="/images/buttons/delete.png"/>
+                    </li>
+                    <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
+                    <li id="btn-compress">
+                        <img class="tool-button" src="/images/buttons/compress.png"/>
+                    </li>
+                    <li id="btn-uncompress">
+                        <img class="tool-button" src="/images/buttons/uncompress.png"/>
+                    </li>
+                    <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
+                    <li id="btn-rename">
+                        <img class="tool-button" src="/images/buttons/rename.png"/>
+                    </li>
+                    <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
+                    <li id="btn-add_file">
+                        <img class="tool-button " src="/images/buttons/add_file.png"/>
+                    </li>
+                    <li id="btn-add_folder">
+                        <img class="tool-button" src="/images/buttons/add_folder.png"/>
+                    </li>
+                    <li id="btn-add_structure">
+                        <img class="tool-button" src="/images/buttons/add_archive.png"/>
+                    </li>
+                    <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
+                    <li>
+                        <input type="text" id="search-input"/>
+                    </li>
+                    <li id="btn-search">
+                        <img class="tool-button" src="/images/buttons/search.png"/>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li id="btn-user_profile">
+                        <img class="tool-button" src="/images/buttons/user_profile.png"/>
+                    </li>
+                    <li id="btn-logout">
+                        <img class="tool-button" src="/images/buttons/logout.png"/>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 
     <div th:fragment="pathbar">
-        <div class="container col-xs-offset-2 col-xs-8" id="path-bar">
+        <div class="container-fluid col-xs-offset-2 col-xs-8" id="path-bar">
             <span class="col-xs-1" id="btn-refresh">
                 <img class="tool-button" src="/images/buttons/refresh.png"/>
             </span>
             <span class="col-xs-10">
                 <input type="text" id="current-path-input" value="/"/>
             </span>
-            <span class="col-xs-1" id="go-path">
+            <span class="col-xs-1" id="btn-go_path">
                 <img class="tool-button" src="/images/buttons/go_arrow.png"/>
             </span>
         </div>
