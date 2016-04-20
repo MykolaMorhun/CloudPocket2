@@ -1,0 +1,14 @@
+
+body {
+    background-color: black;
+}
+
+#track_name {
+    display: block;
+    margin: 150px auto 50px;
+    text-align: center;
+    font-family: monospace;
+    font-size: 36px;
+    color: rgba(69, 69, 245, 1);
+    text-shadow: 0 0 10px blue;
+}

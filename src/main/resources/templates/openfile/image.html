@@ -1,0 +1,16 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <title th:text="${fileInfo.filename + ' - Cloud Pocket'}">Welcome to Cloud Pocket</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favlogo.png}" sizes="32x32"/>
+    <link th:href="@{/css/openfile/image.css}" rel="stylesheet"/>
+</head>
+<body>
+    <table id="img_wrapper">
+        <tr>
+            <td><img th:src="${urlToOpen}"/></td>
+        </tr>
+    </table>
+    </body>
+</html>

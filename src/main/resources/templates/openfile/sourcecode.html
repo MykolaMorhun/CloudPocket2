@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <title th:text="${fileInfo.filename + ' - Cloud Pocket'}">Welcome to Cloud Pocket</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favlogo.png}" sizes="32x32"/>
+
+    <script th:src="@{/lib/jquery-2.2.2.min.js}"></script>
+
+    <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shCore.js"></script>
+
+    <th:block th:switch="${fileInfo.extension}">
+        <th:block th:case="'sh'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushBash.js"></script>
+        </th:block>
+        <th:block th:case="'c'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushCpp.js"></script>
+        </th:block>
+        <th:block th:case="'cpp'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushCpp.js"></script>
+        </th:block>
+        <th:block th:case="'h'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushCpp.js"></script>
+        </th:block>
+        <th:block th:case="'css'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushCss.js"></script>
+        </th:block>
+        <th:block th:case="'pas'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushDelphi.js"></script>
+        </th:block>
+        <th:block th:case="'java'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushJava.js"></script>
+        </th:block>
+        <th:block th:case="'js'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushJScript.js"></script>
+        </th:block>
+        <th:block th:case="'pl'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushPerl.js"></script>
+        </th:block>
+        <th:block th:case="'php'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushPhp.js"></script>
+        </th:block>
+        <th:block th:case="'py'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushPython.js"></script>
+        </th:block>
+        <th:block th:case="'rb'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushRuby.js"></script>
+        </th:block>
+        <th:block th:case="'scala'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushScala.js"></script>
+        </th:block>
+        <th:block th:case="'sql'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushSql.js"></script>
+        </th:block>
+        <th:block th:case="'xml'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushXml.js"></script>
+        </th:block>
+        <th:block th:case="'html'">
+            <script type="text/javascript" src="/lib/syntaxhighlighter/scripts/shBrushXml.js"></script>
+        </th:block>
+    </th:block>
+
+    <link href="/lib/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
+    <link href="/lib/syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function() {
+            function loadContent() {
+                $.ajax({
+                    url: /*[[${urlToOpen}]]*/,
+                    async: false,
+                    success: function(result){
+                        $("#source_code").text(result);
+                    }});
+            }
+
+            loadContent();
+            SyntaxHighlighter.all();
+        });
+        /*]]>*/
+    </script>
+</head>
+<body>
+    <pre id="source_code" th:class="${'brush: ' + fileInfo.extension}"></pre>
+</body>
+</html>

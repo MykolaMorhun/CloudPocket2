@@ -422,6 +422,29 @@ public class FilesService {
     }
 
     /**
+     * Returns information about file system entry.
+     *
+     * @param login
+     *         user's login
+     * @param path
+     *         path to directory with given file
+     * @param name
+     *         name of a file
+     * @return basic information about file system entry
+     * @throws FileNotFoundException
+     *         if specified file doesn't exist
+     * @throws IOException
+     */
+    public FileDto getFileInfo(String login, String path, String name) throws IOException {
+        Path absolutePath = getAbsolutePath(login, path);
+        Path pathToFile = absolutePath.resolve(name);
+        if (Files.exists(pathToFile)) {
+            return FSUtils.getFileCommonInfoFromPath(pathToFile);
+        }
+        throw new FileNotFoundException();
+    }
+
+    /**
      * Returns detailed information about file system entry.
      *
      * @param login

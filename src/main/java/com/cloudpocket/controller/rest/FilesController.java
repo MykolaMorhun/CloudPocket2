@@ -191,11 +191,16 @@ public class FilesController {
                     produces = APPLICATION_OCTET_STREAM_VALUE)
     public void downloadFile(@RequestParam(required = true) String path,
                              @RequestParam(required = true) String file,
+                             @RequestParam(required = false) Boolean inline,
                              @AuthenticationPrincipal UserDetails userDetails,
                              HttpServletResponse response) throws IOException {
         Path pathToFile = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, file);
         response.setContentType(Files.probeContentType(pathToFile));
-        response.setHeader("Content-disposition", "attachment; filename=\"" + pathToFile.getFileName() + "\"");
+        if (inline != Boolean.TRUE) {
+            response.setHeader("Content-disposition", "attachment; filename=\"" + pathToFile.getFileName() + "\"");
+        } else {
+            response.setHeader("Content-disposition", "inline; filename=\"" + pathToFile.getFileName() + "\"");
+        }
         response.setContentLengthLong(Files.size(pathToFile));
         filesService.downloadFile(pathToFile, response.getOutputStream());
     }

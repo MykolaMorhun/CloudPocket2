@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <title th:text="${fileInfo.filename + ' - Cloud Pocket'}">Welcome to Cloud Pocket</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favlogo.png}" sizes="32x32"/>
+
+    <script th:src="@{/lib/jquery-2.2.2.min.js}"></script>
+
+    <script src="/lib/johndyer-mediaelement/mediaelement-and-player.min.js"></script>
+    <link rel="stylesheet" href="/lib/johndyer-mediaelement/mediaelementplayer.min.css" />
+
+    <link rel="stylesheet" href="/css/openfile/audio.css" />
+</head>
+<body>
+    <div id="track_name" th:text="${fileInfo.filename}">Track name</div>
+    <div id="audio_player_wrapper" align="center" >
+        <audio id="player" width="600px" preload="metadata"
+               th:src="${urlToOpen}" th:type="${'audio/' + fileInfo.extension}" controls="controls">
+        </audio>
+    </div>
+    <script>
+        $('audio').mediaelementplayer();
+    </script>
+</body>
+</html>
