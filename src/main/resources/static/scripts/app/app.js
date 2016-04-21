@@ -162,7 +162,14 @@ function changeFilesOrder(elem) {
 }
 
 function upload_file() {
-    document.forms["upload_file"].submit();
+    $('#upload_file_form').ajaxSubmit({
+        success: function () {
+            update_files_list();
+        },
+        error: function () {
+            alert('Error while sending file to server');
+        }
+    });
 }
 
 function view_file_directory() {
