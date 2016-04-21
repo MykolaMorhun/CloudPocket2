@@ -29,3 +29,29 @@ function unknown_extension(image) {
     image.src = "/images/fileico/unknown.png";
     return true;
 }
+
+var kilobyte = 1024;
+var megabyte = kilobyte * 1024;
+var gigabyte = megabyte * 1024;
+var get_file_size = function() {
+    var file_size = this.size;
+    if (file_size < kilobyte) {
+        return file_size + ' B';
+    } else if (file_size < megabyte) {
+        return roundToHundredths(file_size / kilobyte) + ' KB';
+    } else if (file_size < gigabyte) {
+        return roundToHundredths(file_size / megabyte) + ' MB';
+    } else {
+        return roundToHundredths(file_size / megabyte) + ' GB';
+    }
+};
+
+function roundToHundredths(number) {
+    return  Math.round(number * 100) / 100;
+}
+
+function get_file_upload_form_template() {
+    return '<form id="upload_file_form" name="upload_file" action="" method="post" enctype="multipart/form-data" style="display: none">' +
+               '<input type="file" name="file" id="file_input">' +
+           '</form>';
+}

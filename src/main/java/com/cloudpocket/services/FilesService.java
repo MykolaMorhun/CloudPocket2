@@ -140,13 +140,19 @@ public class FilesService {
      *         new file name
      * @throws IOException
      *         if an error occurs while renaming file
+     * @throws FileNotFoundException
+     *         if file in specified location doesn't exist
      */
     public void rename(String login,
                        String path,
                        String oldName,
                        String newName) throws IOException {
         Path oldPath = getAbsolutePath(login, path).resolve(oldName);
-        Files.move(oldPath, oldPath.resolveSibling(newName));
+        if (Files.exists(oldPath)) {
+            Files.move(oldPath, oldPath.resolveSibling(newName));
+        } else {
+            throw new FileNotFoundException();
+        }
     }
 
     /**
@@ -305,7 +311,7 @@ public class FilesService {
                                        String[] files,
                                        OutputStream outputStream) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
-        String archiveName = new Date().toString();
+        String archiveName = new Date().toString() + ".zip";
         ZipUtils.zip(absolutePath, files, archiveName);
         Path pathToArchive = absolutePath.resolve(archiveName);
         StreamUtils.writeFileToOutputStream(pathToArchive, outputStream);

@@ -18,7 +18,9 @@
     cursor: pointer;
     text-align: center;
 }
-
+#files-explorer tr[class=selected] {
+    background-color: #e5e580 !important;
+}
 #files-explorer tr:nth-child(2n) {
     background-color: #f0f0f0;
 }
@@ -26,13 +28,13 @@
     background-color: #d8d8d8;
 }
 #files-explorer tr:hover {
-    background-color: #8888ff;
+    background-color: #8888ff !important;
 }
 
 /** columns **/
 
 .sort_by_it {
-    color: yellow;
+    color: yellow !important;
 }
 
 /* checkbox */
