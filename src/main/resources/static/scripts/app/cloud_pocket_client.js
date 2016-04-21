@@ -166,6 +166,23 @@ function create_directory_request(callback, path, name) {
     });
 }
 
+function search_files_request(callback, path, pattern) {
+    $.ajax({
+        url: '/api/files/search',
+        data: {
+            path: path,
+            namePattern: pattern
+        },
+        type: 'GET',
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            callback(response);
+        }
+    });
+}
+
 function logout_request(callback) {
     $.get("/logout", function(response) {
         callback(response)

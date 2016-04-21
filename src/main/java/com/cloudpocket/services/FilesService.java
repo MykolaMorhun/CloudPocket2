@@ -376,8 +376,8 @@ public class FilesService {
      * @param path
      *         absolute path to directory to search in
      * @param namePattern
-     *         regex for match files and directories.
-     *         Must be at least 3 symbols long.
+     *         Name pattern for match files and directories.
+     *         * and ? are possible wildcards
      *         Just part of a file name is correct.
      * @param skipSubfolders
      *         if {@code false} then search for files and directories
@@ -392,15 +392,14 @@ public class FilesService {
      *         if directory to search in doesn't exist
      * @throws IOException
      *         if errors occurs while reading file system
+     * @throws IllegalArgumentException
+     *         if {@code maxResults} exceeds {@code SEARCH_MAX_RESULTS}
      */
     public Map<String, FileDto> search(String login,
                                        String path,
                                        String namePattern,
                                        Boolean skipSubfolders,
                                        Integer maxResults) throws IOException {
-        if (namePattern == null || namePattern.length() < 3) {
-            throw new IllegalArgumentException("name pattern");
-        }
         if (maxResults != null) {
             if (maxResults < 1 || maxResults > SEARCH_MAX_RESULTS) {
                 throw new IllegalArgumentException("max search result");

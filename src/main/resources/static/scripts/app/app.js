@@ -13,8 +13,9 @@ var app_state = {
 // map that stores files from current directory: filename -> fileinfo
 var files_map;
 
-var current_path_input;
 var files_table_container;
+var current_path_input;
+var search_input;
 var file_input;
 
 var files_orders = {};
@@ -31,6 +32,7 @@ $(document).ready(function() {
 function find_elements() {
     files_table_container = $('#files-list');
     current_path_input = $('#current-path-input');
+    search_input = $('#search-input');
 
     files_orders['Type'] = $('#type-column');
     files_orders['Name'] = $('#name-column');
@@ -49,6 +51,11 @@ function bind_events() {
     current_path_input.bind('keypress', function (event) {
         if(event.keyCode == 13) {
             on_go_path_button_click();
+        }
+    });
+    search_input.bind('keypress', function (event) {
+        if(event.keyCode == 13) {
+            on_search_button_click();
         }
     });
 
@@ -136,6 +143,13 @@ function changeFilesOrder(elem) {
 
 function upload_file() {
     document.forms["upload_file"].submit();
+}
+
+function view_file_directory() {
+    var full_path = $(this).parent().attr("id");
+    var path_to_folder_that_contain_file = full_path.split('/').slice(0,-1).join('/') + '/';
+    app_state.current_path = path_to_folder_that_contain_file;
+    update_files_list();
 }
 
 /*************************************/
@@ -258,7 +272,11 @@ function on_add_structure_button_click() {
 }
 
 function on_search_button_click() {
-
+    search_input.focus();
+    var search_pattern = search_input.val();
+    if (search_pattern != '') {
+        search_files_request(search_files_callback, app_state.current_path, search_pattern);
+    }
 }
 
 function on_user_profile_button_click() {
@@ -374,6 +392,30 @@ function create_directory_callback(data) {
     } else {
         alert('failed to create new directory');
     }
+}
+
+function search_files_callback(data) {
+    if ('status' in data) {
+        list_files_error(data);
+        return;
+    }
+    
+    current_path_input.val('Search results');
+    files_table_container.html("");
+
+    files_map = {};
+    for (var full_path in data) {
+        var item = data[full_path];
+        item.filename = full_path;
+
+        item.get_image_src = get_image_src;
+        item.get_file_size = get_file_size;
+        files_table_container.append(get_file_entry_html(item));
+    }
+
+    // set binding
+    $('#files-explorer td.cell-filename').bind('click', view_file_directory);
+    $('#files-explorer td.cell-type-image').bind('click', view_file_directory);
 }
 
 function logout_callback() {
