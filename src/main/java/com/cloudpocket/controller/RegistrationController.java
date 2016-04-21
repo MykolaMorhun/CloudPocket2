@@ -26,7 +26,7 @@ public class RegistrationController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String registerUser(@ModelAttribute UserDto newUser) throws IOException {
         registrationService.registerNewUser(newUser);
-        return "redirect:/storage";
+        return "redirect:/login";
     }
 
     @ExceptionHandler(IOException.class)
