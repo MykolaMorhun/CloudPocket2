@@ -19,6 +19,7 @@ var search_input;
 var file_input;
 
 var files_orders = {};
+var check_all_button;
 
 $(document).ready(function() {
     document.body.innerHTML += get_file_upload_form_template();
@@ -40,6 +41,7 @@ function find_elements() {
     files_orders['Creation date'] = $('#date-column');
 
     file_input = $('#file_input');
+    check_all_button = $('#check-all');
 }
 
 function bind_events() {
@@ -60,6 +62,7 @@ function bind_events() {
     });
 
     file_input.on('change', upload_file);
+    check_all_button.bind('click', toggle_all_checkboxes);
 }
 
 /*************************************/
@@ -116,7 +119,7 @@ function get_selected_files() {
     return selected_files;
 }
 
-function trigger_select() {
+function toggle_checkbox() {
     var item_id = $(this).closest('tr').attr("id");
     if (this.checked) {
         app_state.selected_files_list.push(item_id);
@@ -124,6 +127,23 @@ function trigger_select() {
     } else {
         app_state.selected_files_list.splice(app_state.selected_files_list.indexOf(item_id), 1);
         document.getElementById(item_id).className = '';
+    }
+}
+
+function toggle_all_checkboxes() {
+    if (app_state.selected_files_list.length != 0) {
+        app_state.selected_files_list = [];
+        $('input[id^=checkbox-]').prop('checked', false);
+        $('#files-list > tr').removeClass('selected');
+    } else {
+        $('input[id^=checkbox-]').prop('checked', true);
+        $('#files-list > tr').addClass('selected');
+        app_state.selected_files_list = [];
+        for (var key in files_map) {
+            if (files_map.hasOwnProperty(key)) {
+                app_state.selected_files_list.push(key);
+            }
+        }
     }
 }
 
@@ -327,7 +347,7 @@ function list_files_callback(data) {
     // update binding
     $('#files-explorer td.cell-filename').bind('click', view_item);
     $('#files-explorer td.cell-type-image').bind('click', view_item);
-    $('#files-explorer input[type=checkbox]').bind('click', trigger_select);
+    $('#files-explorer input[type=checkbox]').bind('click', toggle_checkbox);
 }
 
 function copy_files_callback(data) {
@@ -416,6 +436,8 @@ function search_files_callback(data) {
     // set binding
     $('#files-explorer td.cell-filename').bind('click', view_file_directory);
     $('#files-explorer td.cell-type-image').bind('click', view_file_directory);
+    
+    $('div[class=squaredCheckbox]').remove();
 }
 
 function logout_callback() {
