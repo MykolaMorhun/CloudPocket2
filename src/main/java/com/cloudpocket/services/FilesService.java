@@ -34,8 +34,45 @@ public class FilesService {
 
     private static final int SEARCH_MAX_RESULTS = 250;
 
+    private static final String WELCOME_FILE = "welcome.txt";
+
     @Value("${cloudpocket.storage}")
-    public String PATH_TO_STORAGE;
+    private String PATH_TO_STORAGE;
+
+    /**
+     * Creates home dir for new user.
+     * Adds welcome file into it.
+     *
+     * @param login
+     *         new user's login
+     * @throws IOException
+     *         when a problem occurs with files operations
+     */
+    public void addNewAccount(String login) throws IOException {
+        Path userHomeDir = Paths.get(PATH_TO_STORAGE, login);
+        if (Files.exists(userHomeDir)) {
+            FSUtils.delete(userHomeDir);
+        }
+        Files.createDirectories(userHomeDir);
+
+        Path pathToStorage = Paths.get(PATH_TO_STORAGE);
+        Files.copy(pathToStorage.resolve(WELCOME_FILE),
+                   pathToStorage.resolve(login + '/' + WELCOME_FILE));
+    }
+
+    /**
+     * Deletes user's files from server file system.
+     *
+     * @param login
+     *        user's login
+     */
+    public void deleteUserData(String login) {
+        try {
+            FSUtils.delete(Paths.get(PATH_TO_STORAGE, login));
+        } catch (IOException e) {
+            // TODO log errors
+        }
+    }
 
     /**
      * Returns files list in given user's directory.

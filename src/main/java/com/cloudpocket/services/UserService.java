@@ -27,6 +27,8 @@ public class UserService {
     @Autowired
     private UserRepository repository;
     @Autowired
+    private FilesService filesService;
+    @Autowired
     private Md5PasswordEncoder md5Encoder;
 
     @Value("${cloudpocket.storage}")
@@ -82,11 +84,7 @@ public class UserService {
             throw new UserAlreadyExistException();
         }
 
-        Path userHomeDir = Paths.get(PATH_TO_STORAGE, newUserInfo.getLogin());
-        if (Files.exists(userHomeDir)) {
-            FSUtils.delete(userHomeDir);
-        }
-        Files.createDirectories(userHomeDir);
+        filesService.addNewAccount(newUserInfo.getLogin());
 
         User user = new User();
         user.setLogin(newUserInfo.getLogin());
@@ -169,27 +167,13 @@ public class UserService {
     public void deleteUserById(long id) {
         String userLogin = repository.findOne(id).getLogin();
         repository.delete(id);
-        deleteUserData(userLogin);
+        filesService.deleteUserData(userLogin);
     }
 
     @Transactional
     public void deleteUserByLogin(String login) {
         repository.deleteUserByLogin(login);
-        deleteUserData(login);
-    }
-
-    /**
-     * Deletes user's files from server file system.
-     *
-     * @param login
-     *        user's login
-     */
-    private void deleteUserData(String login) {
-        try {
-            FSUtils.delete(Paths.get(PATH_TO_STORAGE, login));
-        } catch (IOException e) {
-            // TODO log errors
-        }
+        filesService.deleteUserData(login);
     }
 
 }

@@ -19,8 +19,6 @@ import static com.cloudpocket.config.SecurityConfig.USER;
 @Component
 public class RegistrationService {
 
-    private static final String WELCOME_FILE = "welcome.txt";
-
     @Autowired
     private UserService userService;
 
@@ -42,10 +40,6 @@ public class RegistrationService {
                                                                       newUser.getPassword(),
                                                                       AuthorityUtils.createAuthorityList(USER));
         SecurityContextHolder.getContext().setAuthentication(auth);
-
-        Path pathToStorage = Paths.get(PATH_TO_STORAGE);
-        Files.copy(pathToStorage.resolve(WELCOME_FILE),
-                   pathToStorage.resolve(newUser.getLogin() + '/' + WELCOME_FILE));
     }
 
 }
