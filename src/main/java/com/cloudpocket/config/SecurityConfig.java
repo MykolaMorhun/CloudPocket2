@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").hasAuthority(USER)
                 .antMatchers("/storage/**").hasAuthority(USER)
                 .antMatchers("/open/**").hasAuthority(USER)
+                .antMatchers("/profile/**").hasAuthority(USER)
                 .antMatchers("/api/version").permitAll()
             .and().formLogin().loginPage("/login")
                 .usernameParameter("login").passwordParameter("password").defaultSuccessUrl("/storage")

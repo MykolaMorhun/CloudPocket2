@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <include th:replace="/snippets/headinclude"/>
+    <title>Cloud Pocket - User profile</title>
+
+    <link th:href="@{/css/default.css}" rel="stylesheet"/>
+    <link th:href="@{/css/userprofile.css}" rel="stylesheet"/>
+    <link th:href="@{/css/forms.css}" rel="stylesheet"/>
+
+    <script th:src="@{/scripts/app/cloud_pocket_client.js}"></script>
+    <script th:src="@{/scripts/app/user_profile.js}"></script>
+</head>
+<body>
+    <div th:replace="/snippets/userprofile_toolbar :: profile-toolbar"></div>
+
+    <div class="container">
+        <div class="container form col-xs-offset-4 col-xs-4" id="user-profile-form">
+            <img id="avatar" class="avatar" src="/images/buttons/user_profile.png"/>
+            <form role="form">
+                <div class="form-group">
+                    <label for="login">Login:</label>
+                    <input type="text" class="form-control" id="login"/>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" id="email" placeholder="Do not change"/>
+                </div>
+                <div class="form-group">
+                    <label for="password1">New Password:</label>
+                    <input type="password" class="form-control" id="password1" placeholder="Do not change"/>
+                </div>
+                <div class="form-group">
+                    <label for="password2">Confirm New Password:</label>
+                    <input type="password" class="form-control" id="password2"/>
+                </div>
+                <button id="back_button" type="button" class="btn btn-warning btn135">Back</button>
+                <button id="save_button" type="button" class="btn btn-primary btn135">Save</button>
+            </form>
+            <!--<button id="delete_account_button" type="button" class="btn btn-danger btn275">Delete this account</button>-->
+        </div>
+    </div>
+
+    <div th:replace="/snippets/common :: footer"></div>
+</body>
+</html>

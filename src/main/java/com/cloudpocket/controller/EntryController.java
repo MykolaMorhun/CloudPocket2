@@ -20,12 +20,12 @@ public class EntryController {
 
     @RequestMapping("/home")
     public String getMainPage() {
-        return "home";
+        return "welcome/home";
     }
 
     @RequestMapping("/info")
     public String getInfoPage() {
-        return "info";
+        return "welcome/info";
     }
 
     @RequestMapping("/login")
@@ -38,9 +38,9 @@ public class EntryController {
         return "logout";
     }
 
-    @RequestMapping("/register")
+    @RequestMapping("register")
     public String getRegisterPage() {
-        return "register";
+        return "welcome/register";
     }
 
     @RequestMapping("/swagger")

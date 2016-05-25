@@ -307,7 +307,7 @@ function on_search_button_click() {
 }
 
 function on_user_profile_button_click() {
-
+    window.open("/profile/user/","_self")
 }
 
 function on_logout_button_click() {

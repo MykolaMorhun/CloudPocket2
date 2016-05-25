@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+</head>
+<body>
+    <div th:fragment="profile-toolbar">
+        <link th:href="@{/css/welcome_menu.css}" rel="stylesheet"/>
+        <link th:href="@{/css/toolbar.css}" rel="stylesheet"/>
+        <div class="navbar navbar-default">
+            <div class="navbar-header">
+                <img src="/images/logo.png" id="menu_logo" class="pull-left" height="35"/>
+                <span class="navbar-brand">Cloud Pocket</span>
+            </div>
+            <div class="collapse navbar-collapse" id="welcome-menu-navbar">
+                <ul class="nav navbar-nav">
+                    <li id="btn-home">
+                        <img class="tool-button " src="/images/buttons/home_dir.png"/>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li id="btn-delete_account">
+                        <img class="tool-button" src="/images/buttons/delete_account.png"/>
+                    </li>
+                    <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
+                    <li id="btn-settings">
+                        <img class="tool-button" src="/images/buttons/settings.png"/>
+                    </li>
+                    <li id="btn-user_profile">
+                        <img class="tool-button" src="/images/buttons/user_profile.png"/>
+                    </li>
+                    <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
+                    <li id="btn-logout">
+                        <img class="tool-button" src="/images/buttons/logout.png"/>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

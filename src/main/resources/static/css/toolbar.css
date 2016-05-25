@@ -35,22 +35,3 @@
 #search-input:hover {
     width: 175px;
 }
-
-/****************************************/
-
-#path-bar {
-    align-items: center;
-    margin-top: 55px;
-}
-
-#current-path-input {
-    width: 100%;
-    height: 36px;
-    border: none;
-    color: #0030FF;
-    background: url("/images/forms/path_background.png") repeat-x;
-    font-family: monospace;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 6px;
-}

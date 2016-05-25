@@ -29,7 +29,7 @@ button {
     width: 100px;
 }
 
-input:required:invalid, input:focus:invalid {
+input:invalid, input:required:invalid, input:invalid, input:focus:invalid {
     background: url("/images/forms/invalid.png") no-repeat right top;
     background-size: 75px;
 }

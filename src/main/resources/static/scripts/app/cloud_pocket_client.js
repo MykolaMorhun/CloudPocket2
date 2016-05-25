@@ -189,3 +189,70 @@ function logout_request(callback) {
     });
 }
 
+/***********************************************/
+
+function get_user_info_request(callback, async) {
+    if (async === undefined) {
+        async = true;
+    }
+    
+    $.ajax({
+        url: '/api/user/',
+        type: 'GET',
+        async: async,
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            callback(response);
+        }
+    });
+}
+
+// new_password & new_email is nullable
+function update_user_info_request(callback, login, new_password, new_email, async) {
+    if (async === undefined) {
+        async = true;
+    }
+    var request_data = JSON.stringify({
+        login: login,
+        password: new_password,
+        email: new_email
+    });
+
+    $.ajax({
+        url: '/api/user/',
+        contentType: 'application/json',
+        data: request_data,
+        type: 'POST',
+        async: async,
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            callback(response);
+        }
+    });
+}
+
+function delete_account_request(callback, login) {
+    var request_data = JSON.stringify({
+        login: login,
+        password: '',
+        email: ''
+    });
+
+    $.ajax({
+        url: '/api/user/',
+        contentType: 'application/json',
+        data: request_data,
+        type: 'DELETE',
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            callback(response);
+        }
+    });
+}
+
