@@ -321,6 +321,9 @@ function on_refresh_button_click() {
 function on_go_path_button_click() {
     var new_path = current_path_input.val();
     if (new_path != '') {
+        if (!new_path.endsWith('/')) {
+            new_path += '/';
+        }
         app_state.current_path = new_path;
         update_files_list();
     }
@@ -336,6 +339,7 @@ function list_files_callback(data) {
         return;
     }
 
+    // add .. item if no root dir
     if (app_state.current_path == '/') {
         files_table_container.html("");
     } else {

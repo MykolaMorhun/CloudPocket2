@@ -9,6 +9,7 @@
         <link th:href="@{/css/toolbar.css}" rel="stylesheet"/>
         <link th:href="@{/css/pathbar.css}" rel="stylesheet"/>
         <script th:src="@{/scripts/app/toolbar.js}"></script>
+        <script th:src="@{/scripts/responsive.js}"></script>
         <div class="container-fluid">
             <div class="navbar-header">
                 <img src="/images/logo.png" id="menu_logo" class="pull-left" height="35"/>
@@ -17,11 +18,11 @@
             <div class="collapse navbar-collapse" id="toolbar-menu-navbar">
                 <ul class="nav navbar-nav">
                     <li id="btn-home">
-                        <img class="tool-button " src="/images/buttons/home_dir.png"/>
+                        <img class="tool-button" src="/images/buttons/home_dir.png"/>
                     </li>
                     <li><img class="tool-separator" src="/images/buttons/toolbar_separator.png"/></li>
                     <li id="btn-copy">
-                        <img class="tool-button " src="/images/buttons/copy.png"/>
+                        <img class="tool-button" src="/images/buttons/copy.png"/>
                     </li>
                     <li id="btn-cut">
                         <img class="tool-button" src="/images/buttons/cut.png"/>
@@ -78,16 +79,16 @@
     </div>
 
     <div th:fragment="pathbar">
-        <div class="container-fluid col-xs-offset-2 col-xs-8" id="path-bar">
-            <span class="col-xs-1" id="btn-refresh">
+        <div id="path-bar">
+            <div id="btn-refresh" class="path-bar-item">
                 <img class="tool-button" src="/images/buttons/refresh.png"/>
-            </span>
-            <span class="col-xs-10">
+            </div>
+            <div class="path-bar-item">
                 <input type="text" id="current-path-input" value="/"/>
-            </span>
-            <span class="col-xs-1" id="btn-go_path">
+            </div>
+            <div id="btn-go_path" class="path-bar-item">
                 <img class="tool-button" src="/images/buttons/go_arrow.png"/>
-            </span>
+            </div>
         </div>
     </div>
 

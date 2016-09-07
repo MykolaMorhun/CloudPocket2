@@ -1,12 +1,17 @@
 
+#files-explorer-wrapper {
+    margin: 25px auto 0;
+}
+
 #files-explorer {
     text-align: center;
-    margin: 125px auto 0;
+    margin: 0 auto;
     box-shadow: 5px 5px 10px #aaf;
 
     font-size: 16px;
 
-    width: 850px;
+    width: 100%;
+    max-width: 850px;
     border-spacing: 0;
 }
 

@@ -1,10 +1,14 @@
+
 #path-bar {
-    align-items: center;
-    margin-top: 55px;
+    text-align: center;
+    white-space: nowrap;
+    margin: 65px auto 0;
+    height: 50px;
 }
 
 #current-path-input {
     width: 100%;
+    max-width: 750px;
     height: 36px;
     border: none;
     color: #0030FF;
@@ -13,4 +17,11 @@
     font-size: 16px;
     font-weight: bold;
     margin-top: 6px;
+}
+
+.path-bar-item {
+    height: 50px;
+    width: 50px;
+    display: inline;
+    vertical-align: middle;
 }

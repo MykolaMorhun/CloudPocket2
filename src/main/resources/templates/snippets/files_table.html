@@ -8,37 +8,39 @@
         <link th:href="@{/css/files_table.css}" rel="stylesheet"/>
         <link th:href="@{/css/lib/checkbox.css}" rel="stylesheet"/>
         <script th:src="@{/lib/mustache.min.js}"></script>
-        <table id="files-explorer">
-            <thead>
-            <tr>
-                <th id="check-all">&#10003;</th>
-                <th id="type-column">Type</th>
-                <th id="name-column">Name</th>
-                <th id="size-column">Size</th>
-                <th id="date-column">Creation date</th>
-            </tr>
-            </thead>
-            <tbody id="files-list">
-            <script id="back-entity-template" type="x-tmpl-mustache">
-                <tr id="..">
-                    <td class="cell-checkbox"></td>
-                    <td class="cell-type-image"><img class="file-ico" src="/images/fileico/directory_back.png"/></td>
-                    <td class="cell-filename">..</td>
-                    <td class="cell-filesize"></td>
-                    <td class="cell-creation-date"></td>
+        <div id="files-explorer-wrapper">
+            <table id="files-explorer">
+                <thead>
+                <tr>
+                    <th id="check-all">&#10003;</th>
+                    <th id="type-column">Type</th>
+                    <th id="name-column">Name</th>
+                    <th id="size-column">Size</th>
+                    <th id="date-column">Creation date</th>
                 </tr>
-            </script>
-            <script id="file-entity-template" type="x-tmpl-mustache">
-                <tr id="{{filename}}">
-                    <td class="cell-checkbox"><div class="squaredCheckbox"><input type="checkbox" value="None" id="checkbox-{{filename}}"/><label for="checkbox-{{filename}}"></label></div></td>
-                    <td class="cell-type-image"><img class="file-ico" src="{{get_image_src}}" onerror="unknown_extension(this);"/></td>
-                    <td class="cell-filename">{{filename}}</td>
-                    <td class="cell-filesize">{{get_file_size}}</td>
-                    <td class="cell-creation-date">{{creationDate}}</td>
-                </tr>
-            </script>
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="files-list">
+                <script id="back-entity-template" type="x-tmpl-mustache">
+                    <tr id="..">
+                        <td class="cell-checkbox"></td>
+                        <td class="cell-type-image"><img class="file-ico" src="/images/fileico/directory_back.png"/></td>
+                        <td class="cell-filename">..</td>
+                        <td class="cell-filesize"></td>
+                        <td class="cell-creation-date"></td>
+                    </tr>
+                </script>
+                <script id="file-entity-template" type="x-tmpl-mustache">
+                    <tr id="{{filename}}">
+                        <td class="cell-checkbox"><div class="squaredCheckbox"><input type="checkbox" value="None" id="checkbox-{{filename}}"/><label for="checkbox-{{filename}}"></label></div></td>
+                        <td class="cell-type-image"><img class="file-ico" src="{{get_image_src}}" onerror="unknown_extension(this);"/></td>
+                        <td class="cell-filename">{{filename}}</td>
+                        <td class="cell-filesize">{{get_file_size}}</td>
+                        <td class="cell-creation-date">{{creationDate}}</td>
+                    </tr>
+                </script>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>

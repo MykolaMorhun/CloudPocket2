@@ -1,4 +1,8 @@
 
+.navbar-nav li {
+    line-height: 50px;
+}
+
 .tool-button {
     width: 42px;
     height: 42px;
@@ -8,8 +12,8 @@
 }
 
 .tool-button:hover {
-    width: 46px;
-    height: 46px;
+    width: 46px !important;
+    height: 46px !important;
     margin: 1px;
 }
 
