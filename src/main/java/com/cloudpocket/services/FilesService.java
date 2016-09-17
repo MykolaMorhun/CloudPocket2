@@ -483,7 +483,7 @@ public class FilesService {
         if (Files.exists(pathToFile)) {
             return FSUtils.getFileCommonInfoFromPath(pathToFile);
         }
-        throw new FileNotFoundException();
+        throw new FileNotFoundException("File '" + name + "' doesn't exist.");
     }
 
     /**
