@@ -2,7 +2,7 @@
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
 <head>
-    <include th:replace="/snippets/headinclude"/>
+    <include th:replace="snippets/headinclude"/>
     <title th:text="${login + ' - Cloud Pocket'}">Cloud Pocket</title>
 
     <script th:src="@{/scripts/app/app.js}"></script>
@@ -12,11 +12,11 @@
     <script th:src="@{/lib/jquery.form.js}"></script>
 </head>
 <body>
-    <div th:replace="/snippets/toolbar :: toolbar"></div>
-    <div th:replace="/snippets/toolbar :: pathbar"></div>
+    <div th:replace="snippets/toolbar :: toolbar"></div>
+    <div th:replace="snippets/toolbar :: pathbar"></div>
     <div class="container">
-        <div th:replace="/snippets/files_table :: files_table"></div>
+        <div th:replace="snippets/files_table :: files_table"></div>
     </div>
-    <div th:replace="/snippets/common :: footer"></div>
+    <div th:replace="snippets/common :: footer"></div>
 </body>
 </html>

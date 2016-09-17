@@ -2,12 +2,12 @@
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
 <head>
-    <include th:replace="/snippets/headinclude"/>
+    <include th:replace="snippets/headinclude"/>
     <title>Cloud Pocket - Login page</title>
     <link th:href="@{/css/forms.css}" rel="stylesheet"/>
 </head>
 <body>
-    <div th:replace="/snippets/welcome_menu :: menu"></div>
+    <div th:replace="snippets/welcome_menu :: menu"></div>
 
     <div th:unless="${param.error == null}">
         <div class="alert alert-danger fade in text-center">
@@ -44,6 +44,6 @@
             </div>
         </form>
     </div>
-    <div th:replace="/snippets/common :: footer"></div>
+    <div th:replace="snippets/common :: footer"></div>
 </body>
 </html>

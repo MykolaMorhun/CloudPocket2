@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 public class AppConfiguration {
 
     @Bean
-    public PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 

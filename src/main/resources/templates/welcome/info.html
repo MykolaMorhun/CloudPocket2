@@ -2,13 +2,13 @@
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
 <head>
-    <include th:replace="/snippets/headinclude"/>
+    <include th:replace="snippets/headinclude"/>
     <title>About Cloud Pocket</title>
 
     <link th:href="@{/css/welcome.css}" rel="stylesheet"/>
 </head>
 <body>
-    <div th:replace="/snippets/welcome_menu :: menu"></div>
+    <div th:replace="snippets/welcome_menu :: menu"></div>
     <div class="center-block text-center info-text">
         <p>
             Easy to start and use
@@ -35,6 +35,6 @@
             Cloud Pocket is free software and provided as is without any warranty. Use it at your own risk.
         </p>
     </div>
-    <div th:replace="/snippets/common :: footer"></div>
+    <div th:replace="snippets/common :: footer"></div>
 </body>
 </html>

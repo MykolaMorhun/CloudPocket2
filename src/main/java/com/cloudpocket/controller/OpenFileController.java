@@ -55,9 +55,9 @@ public class OpenFileController {
         } else if (IMAGES.contains(fileExt)) {
             return "openfile/image";
         } else if (SOURCE_CODE.contains(fileExt)) {
-            return "/openfile/sourcecode";
+            return "openfile/sourcecode";
         } else if (AUDIO.contains(fileExt)) {
-            return "/openfile/audio";
+            return "openfile/audio";
             //return "redirect:" + urlToOpen;
         } else {
             // hope, that user's browser is smart

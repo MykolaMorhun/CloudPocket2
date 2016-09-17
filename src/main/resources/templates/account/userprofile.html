@@ -2,7 +2,7 @@
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
 <head>
-    <include th:replace="/snippets/headinclude"/>
+    <include th:replace="snippets/headinclude"/>
     <title>Cloud Pocket - User profile</title>
 
     <link th:href="@{/css/default.css}" rel="stylesheet"/>
@@ -13,7 +13,7 @@
     <script th:src="@{/scripts/app/user_profile.js}"></script>
 </head>
 <body>
-    <div th:replace="/snippets/userprofile_toolbar :: profile-toolbar"></div>
+    <div th:replace="snippets/userprofile_toolbar :: profile-toolbar"></div>
 
     <div class="container">
         <div class="container form col-xs-offset-4 col-xs-4" id="user-profile-form">
@@ -42,6 +42,6 @@
         </div>
     </div>
 
-    <div th:replace="/snippets/common :: footer"></div>
+    <div th:replace="snippets/common :: footer"></div>
 </body>
 </html>
