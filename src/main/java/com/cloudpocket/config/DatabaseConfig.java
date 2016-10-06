@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 public class DatabaseConfig {
 
     @Bean
-    public DataSource dataSource(@Value("${database.name}") String databaseName) {
+    public DataSource dataSource(@Value("${cloudpocket.database.name}") String databaseName) {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.sqlite.JDBC");
         dataSourceBuilder.url("jdbc:sqlite:" + databaseName);

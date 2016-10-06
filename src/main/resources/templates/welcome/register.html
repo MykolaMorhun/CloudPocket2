@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <div th:if="${@environment.getProperty('users.selfregistration')}">
+    <div th:if="${@environment.getProperty('cloudpocket.users.selfregistration')}">
         <div class="container form" id="register_form">
             <form class="form-horizontal" role="form" method="POST">
                 <div class="form-group">
@@ -53,7 +53,7 @@
             </form>
         </div>
     </div>
-    <div th:unless="${@environment.getProperty('users.selfregistration')}">
+    <div th:unless="${@environment.getProperty('cloudpocket.users.selfregistration')}">
         <div class="center-block text-center info-text">
             <p>Self registration locked by admin.</p>
             <p>
