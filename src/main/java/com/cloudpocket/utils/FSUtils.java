@@ -5,7 +5,9 @@ import com.cloudpocket.model.dto.FileDto;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -319,6 +321,21 @@ public class FSUtils {
         fileDetails.setContentType(Files.probeContentType(item));
 
         return fileDetails;
+    }
+
+    /**
+     * Copies file from current jar out.
+     *
+     * @param pathInsideJar
+     *         path to resource file inside jar
+     * @param path
+     *         path to destination file
+     * @throws IOException
+     *          if input/output error occurs
+     */
+    public static void copyFileFromJar(String pathInsideJar, Path path) throws IOException {
+        InputStream jarResourceStream = FSUtils.class.getClassLoader().getResourceAsStream(pathInsideJar);
+        StreamUtils.writeInputStreamToFile(path, jarResourceStream);
     }
 
 }

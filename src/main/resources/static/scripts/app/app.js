@@ -469,6 +469,9 @@ function list_files_error(data) {
         case 500:
             alert('server error');
             break;
+        case 403:
+            alert('forbidden');
+            break;
         default:
             alert('Unknown error: code ' + data.status);
     }

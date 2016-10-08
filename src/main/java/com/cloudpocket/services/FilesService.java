@@ -9,13 +9,18 @@ import com.cloudpocket.utils.FSUtils;
 import com.cloudpocket.utils.FilesSorter;
 import com.cloudpocket.utils.StreamUtils;
 import com.cloudpocket.utils.ZipUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -28,13 +33,12 @@ import java.util.List;
 import java.util.Map;
 
 import static com.cloudpocket.utils.Utils.firstIfNotNull;
+import static org.apache.naming.ContextBindings.getClassLoader;
 
 @Component
 public class FilesService {
 
     private static final int SEARCH_MAX_RESULTS = 250;
-
-    private static final String WELCOME_FILE = "welcome.txt";
 
     @Value("${cloudpocket.storage}")
     private String PATH_TO_STORAGE;
@@ -55,9 +59,22 @@ public class FilesService {
         }
         Files.createDirectories(userHomeDir);
 
-        Path pathToStorage = Paths.get(PATH_TO_STORAGE);
-        Files.copy(pathToStorage.resolve(WELCOME_FILE),
-                   pathToStorage.resolve(login + '/' + WELCOME_FILE));
+        copyWelcomeFilesIntoNewAccount(login);
+    }
+
+    /**
+     * Creates welcome files in user's home directory.
+     *
+     * @param login
+     *         new user's login
+     */
+    private void copyWelcomeFilesIntoNewAccount(String login) {
+        Path userHomeDir = Paths.get(PATH_TO_STORAGE, login);
+        try {
+            FSUtils.copyFileFromJar("welcome/welcome.txt", userHomeDir.resolve("welcome.txt"));
+        } catch (IOException ignore) {
+            // we shouldn't break registration if coping of welcome files fails
+        }
     }
 
     /**
