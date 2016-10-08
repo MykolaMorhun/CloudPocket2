@@ -40,7 +40,8 @@ public class OnStartCloudPocketApp implements ApplicationListener<ApplicationRea
             try {
                 Files.createDirectories(appStorageRootPath);
             } catch (IOException e) {
-                System.out.println("Failed to create application root directory: " + PATH_TO_STORAGE);
+                System.out.println("Failed to create application root directory: '" + PATH_TO_STORAGE +
+                                   "'. Couse: " + e.getMessage() + " Application will be terminated.");
                 System.exit(0);
             }
         }

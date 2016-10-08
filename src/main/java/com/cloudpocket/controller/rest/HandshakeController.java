@@ -27,7 +27,7 @@ public class HandshakeController {
     @ApiOperation(value = "CloudPocket API version", notes = "Gets information about application API")
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Internal server error"),
-            @ApiResponse(code = 200, message = "") })
+            @ApiResponse(code = 200, message = "Ok") })
     @RequestMapping(method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public String getApiInfo() {
