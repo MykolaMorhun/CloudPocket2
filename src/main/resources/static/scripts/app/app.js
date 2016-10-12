@@ -8,7 +8,9 @@ var app_state = {
 
     files_in_buffer: [],
     buffer_path: '',
-    buffer_action: ''
+    buffer_action: '',
+
+    is_file_uploading: false
 };
 // map that stores files from current directory: filename -> fileinfo
 var files_map;
@@ -162,12 +164,31 @@ function changeFilesOrder(elem) {
 }
 
 function upload_file() {
+    if (app_state.is_file_uploading) {
+        alert("You cannot upload files simultaneously");
+        return;
+    }
+
+    app_state.is_file_uploading = true;
     $('#upload_file_form').ajaxSubmit({
+        beforeSend: function() {
+            var filename = $('#file_input').val().split('[\\/]').pop();
+            upload_file_popup_reset(filename);
+        },
+        uploadProgress: function(event, position, total, percentComplete) {
+            upload_file_popup_update_progress(percentComplete);
+        },
         success: function () {
+            upload_file_popup_success();
+            
             update_files_list();
         },
         error: function () {
+            upload_file_popup_error();
             alert('Error while sending file to server');
+        },
+        complete: function () {
+            app_state.is_file_uploading = false;
         }
     });
 }

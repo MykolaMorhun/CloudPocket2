@@ -1,0 +1,57 @@
+
+/* upload-file-popup */
+#upload-file-popup-container {
+    display: none; /* hidden */
+    min-width: 250px;
+    background-color: rgba(0, 10, 100, 0.5);
+    border-style: groove;
+    text-align: center;
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+}
+
+#upload-file-popup-close-button {
+    color: red;
+    font-family: monospace;
+    font-size: 14px;
+    position: absolute;
+    top: 1px;
+    right: 4px;
+    cursor: pointer;
+}
+
+#upload-file-popup-filename {
+    color: lightgrey;
+    text-align: center;
+}
+
+#upload-file-popup-progress-bar {
+    position: relative;
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 1px;
+    border-radius: 3px;
+}
+
+#upload-file-popup-progress-bar-bar {
+    background-color: #B4F5B4;
+    width: 0%;
+    height: 20px;
+    border-radius: 3px;
+}
+
+#upload-file-popup-progress-bar-percent {
+    color: green;
+    position: absolute;
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 15px;
+    top: 0px;
+    left: 46%;
+}
+
+#upload-file-popup-status {
+    color: lightgrey;
+    text-align: center;
+}
