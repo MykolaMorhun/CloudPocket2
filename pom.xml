@@ -5,8 +5,8 @@
 
 	<groupId>com.cloudpocket</groupId>
 	<artifactId>cloudpocket</artifactId>
-	<version>0.1</version>
-	<packaging>jar</packaging>
+	<version>0.1.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 
 	<name>CloudPocket</name>
 	<description>Service for store your files</description>
