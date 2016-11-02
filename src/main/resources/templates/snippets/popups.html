@@ -4,6 +4,11 @@
 <head>
 </head>
 <body>
+    <div th:fragment="notification_popups">
+        <link th:href="@{/css/popups.css}" rel="stylesheet"/>
+        <script th:src="@{/scripts/app/popups.js}"></script>
+        <div id="notification-popup-container"></div>
+    </div>
     <div th:fragment="file_upload_progress_popup">
         <link th:href="@{/css/popups.css}" rel="stylesheet"/>
         <script th:src="@{/scripts/app/popups.js}"></script>

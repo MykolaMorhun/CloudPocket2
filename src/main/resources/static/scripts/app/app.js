@@ -218,6 +218,8 @@ function on_copy_button_click() {
     app_state.buffer_path = app_state.current_path;
     app_state.buffer_action = 'copy';
     app_state.files_in_buffer = app_state.selected_files_list;
+
+    show_notification('Copied to buffer');
 }
 
 function on_cut_button_click() {
@@ -229,6 +231,8 @@ function on_cut_button_click() {
     app_state.buffer_path = app_state.current_path;
     app_state.buffer_action = 'cut';
     app_state.files_in_buffer = app_state.selected_files_list;
+
+    show_notification('Now click `Paste` in destination directory.');
 }
 
 function on_paste_button_click() {
@@ -245,6 +249,7 @@ function on_paste_button_click() {
         copy_files_request(copy_files_callback, app_state.buffer_path, app_state.current_path, app_state.files_in_buffer);
     } else if (app_state.buffer_action == 'cut') {
         move_files_request(move_files_callback, app_state.buffer_path, app_state.current_path, app_state.files_in_buffer);
+        app_state.files_in_buffer = [];
     }
 }
 
@@ -387,6 +392,7 @@ function copy_files_callback(data) {
         alert('error while copying files');
         return;
     }
+    show_notification('Copied');
     update_files_list();
 }
 
@@ -395,6 +401,7 @@ function move_files_callback(data) {
         alert('error while moving files');
         return;
     }
+    show_notification('Moved');
     update_files_list();
 }
 
@@ -407,6 +414,7 @@ function delete_callback(data) {
         alert('failed to delete files');
         return;
     }
+    show_notification('Deleted');
     app_state.selected_files_list.forEach(function (item) {
         var elem = document.getElementById(item);
         elem.remove();
@@ -416,6 +424,7 @@ function delete_callback(data) {
 
 function compress_files_callback(data) {
     if (data == "") {
+        show_notification('Compressed');
         update_files_list();
     } else {
         alert('failed to compress files');
@@ -424,6 +433,7 @@ function compress_files_callback(data) {
 
 function uncompress_files_callback(data) {
     if (data == "") {
+        show_notification('Extracted');
         update_files_list();
     } else {
         alert('failed to uncompress archive');
@@ -432,6 +442,7 @@ function uncompress_files_callback(data) {
 
 function rename_file_callback(data) {
     if (data === undefined) {
+        show_notification('Renamed');
         update_files_list();
     } else {
         alert('failed to rename file');
@@ -440,6 +451,7 @@ function rename_file_callback(data) {
 
 function create_directory_callback(data) {
     if (data == "") {
+        show_notification('Directory created');
         update_files_list();
     } else {
         alert('failed to create new directory');
@@ -453,6 +465,7 @@ function search_files_callback(data) {
     }
     
     current_path_input.val('Search results');
+    show_notification(Object.keys(data).length + ' results found');
     files_table_container.html("");
 
     files_map = {};
@@ -492,6 +505,9 @@ function list_files_error(data) {
             break;
         case 403:
             alert('forbidden');
+            break;
+        case 503:
+            alert('server is down');
             break;
         default:
             alert('Unknown error: code ' + data.status);

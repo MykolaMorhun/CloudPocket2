@@ -1,5 +1,27 @@
 
 /***********************************************/
+// notifications popup
+var notification_popup_container;
+
+$(document).ready(function() {
+    notification_popup_container = $('#notification-popup-container');
+});
+
+function show_notification(message) {
+    var notification = get_notification_line(message);
+    notification_popup_container.append(notification);
+    setTimeout(function () {
+        var fadeout_time_ms = 1250;
+        notification.fadeOut(fadeout_time_ms);
+        setTimeout(function () { notification.remove(); }, fadeout_time_ms);
+    }, 1750);
+}
+
+function get_notification_line(message) {
+    return $('<div class="notification-line">' + message + '</div>');
+}
+
+/***********************************************/
 // upload file popup
 var upload_file_popup_container;
 var upload_file_popup_close_button;

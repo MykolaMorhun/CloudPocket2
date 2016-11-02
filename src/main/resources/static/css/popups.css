@@ -1,4 +1,20 @@
 
+/* notifications-popup */
+#notification-popup-container {
+    border: none;
+    text-align: left;
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+}
+
+.notification-line {
+    font-family: sans-serif;
+    font-size: 16px;
+    color: #86e6a6;
+    background-color: rgba(30, 30, 30, 0.5);
+}
+
 /* upload-file-popup */
 #upload-file-popup-container {
     display: none; /* hidden */
