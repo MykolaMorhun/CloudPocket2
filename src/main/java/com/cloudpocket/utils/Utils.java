@@ -1,5 +1,8 @@
 package com.cloudpocket.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Common utils.
  */
@@ -21,6 +24,21 @@ public class Utils {
             return value;
         }
         return alternative;
+    }
+
+    /**
+     * Returns current timestamp formatted by given formatter.
+     *
+     * @param dateFormat
+     *         formatter which should format current date/time
+     *         or null for default format
+     * @return current  time
+     */
+    public static String getCurrentDate(SimpleDateFormat dateFormat) {
+        if (dateFormat == null) {
+            return new Date().toString();
+        }
+        return dateFormat.format(new Date());
     }
 
 }

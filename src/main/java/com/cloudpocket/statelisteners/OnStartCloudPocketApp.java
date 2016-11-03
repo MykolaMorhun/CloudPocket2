@@ -1,7 +1,5 @@
 package com.cloudpocket.statelisteners;
 
-import com.cloudpocket.services.FilesService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -18,9 +16,6 @@ import java.nio.file.Paths;
  */
 @Component
 public class OnStartCloudPocketApp implements ApplicationListener<ApplicationReadyEvent> {
-
-    @Autowired
-    private FilesService filesService;
 
     @Value("${cloudpocket.storage}")
     private String PATH_TO_STORAGE;
@@ -41,7 +36,7 @@ public class OnStartCloudPocketApp implements ApplicationListener<ApplicationRea
                 Files.createDirectories(appStorageRootPath);
             } catch (IOException e) {
                 System.out.println("Failed to create application root directory: '" + PATH_TO_STORAGE +
-                                   "'. Couse: " + e.getMessage() + " Application will be terminated.");
+                                   "'. Cause: " + e.getMessage() + " Application will be terminated.");
                 System.exit(0);
             }
         }

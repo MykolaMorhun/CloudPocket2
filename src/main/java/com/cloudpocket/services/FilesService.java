@@ -9,23 +9,19 @@ import com.cloudpocket.utils.FSUtils;
 import com.cloudpocket.utils.FilesSorter;
 import com.cloudpocket.utils.StreamUtils;
 import com.cloudpocket.utils.ZipUtils;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,12 +29,13 @@ import java.util.List;
 import java.util.Map;
 
 import static com.cloudpocket.utils.Utils.firstIfNotNull;
-import static org.apache.naming.ContextBindings.getClassLoader;
+import static com.cloudpocket.utils.Utils.getCurrentDate;
 
 @Component
 public class FilesService {
 
     private static final int SEARCH_MAX_RESULTS = 250;
+    private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh-mm-ss");
 
     @Value("${cloudpocket.storage}")
     private String PATH_TO_STORAGE;
@@ -253,15 +250,15 @@ public class FilesService {
                              ArchiveType archiveType) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
-        if (archiveName == null) {
-            archiveName = new Date().toString();
-        }
         if (archiveType == null) {
             archiveType = ArchiveType.ZIP;
         }
+
         switch (archiveType) {
             case ZIP:
-                return ZipUtils.zip(absolutePath, files, archiveName);
+                return ZipUtils.zip(absolutePath,
+                                    files,
+                                    firstIfNotNull(archiveName, getCurrentDate(FILE_DATE_FORMAT) + ".zip"));
             case RAR:
                 throw new UnsupportedOperationException();
             default:

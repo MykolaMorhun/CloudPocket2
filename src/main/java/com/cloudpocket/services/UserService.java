@@ -5,7 +5,6 @@ import com.cloudpocket.model.User;
 import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.repository.UserRepository;
 
-import com.cloudpocket.utils.FSUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
