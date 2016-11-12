@@ -5,7 +5,6 @@ import com.cloudpocket.model.dto.FileDto;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
@@ -187,11 +186,14 @@ public class FSUtils {
     }
 
     /**
-     * The same as {@link #searchRecursively(Path, String, int)}, but only inside given directory,
-     * do not search inside subdirectories.
+     * The same as {@link #searchRecursively(Path, String, boolean, boolean, int)}, but only inside given directory,
+     * does not search inside subdirectories.
      */
-    public static Map<Path, FileDto> searchInsideDirectoryOnly(Path absolutePath, String namePattern, int maxResults)
-            throws IOException {
+    public static Map<Path, FileDto> searchInsideDirectoryOnly(Path absolutePath,
+                                                               String namePattern,
+                                                               boolean isCaseSensitive,
+                                                               boolean isExactMatch,
+                                                               int maxResults) throws IOException {
         if (namePattern == null || maxResults < 1) {
             throw new IllegalArgumentException();
         }
@@ -201,7 +203,7 @@ public class FSUtils {
         Map<Path, FileDto> foundFiles = new HashMap<>();
         File[] items = folder.listFiles();
         if (items != null) {
-            Pattern pattern = Pattern.compile(namePattern);
+            Pattern pattern = convertFileMaskToRegex(namePattern, isCaseSensitive, isExactMatch);
             for (File item : items) {
                 if (pattern.matcher(item.getName()).find()) {
                     foundFiles.put(item.toPath(), getFileCommonInfoFromPath(item.toPath()));
@@ -228,6 +230,11 @@ public class FSUtils {
      *          ? means any character,
      *          * means any set of characters.
      *         Just part of a file name is correct.
+     * @param isCaseSensitive
+     *         if {@code true} then search is case sensitive
+     * @param isExactMatch
+     *         if {@code true} then only files with full match in name will be returned
+     *         if {@code false} then files which names contain search pattern will be returned
      * @param maxResults
      *         maximal number of results.
      *         If it exceed then search stops and returns result.
@@ -235,18 +242,18 @@ public class FSUtils {
      * @throws IOException
      *         if errors occurs while reading file system
      */
-    public static Map<Path, FileDto> searchRecursively(Path absolutePath, String namePattern, int maxResults)
-            throws IOException {
+    public static Map<Path, FileDto> searchRecursively(Path absolutePath,
+                                                       String namePattern,
+                                                       boolean isCaseSensitive,
+                                                       boolean isExactMatch,
+                                                       int maxResults) throws IOException {
         if (namePattern == null || maxResults < 1) {
             throw new IllegalArgumentException();
         }
 
         Map<Path, FileDto> foundFiles = new HashMap<>();
 
-        namePattern = namePattern.replace(".", "\\.")  // . -> \.  - dot char
-                                 .replace('?', '.')    // ? -> .   - any char
-                                 .replace("*", ".*");  // * -> .*  - any set of chars
-        Pattern pattern = Pattern.compile(namePattern);
+        Pattern pattern = convertFileMaskToRegex(namePattern, isCaseSensitive, isExactMatch);
 
         Files.walkFileTree(absolutePath, new SimpleFileVisitor<Path>() {
             private int resultsCounter = 0;
@@ -266,15 +273,32 @@ public class FSUtils {
                     foundFiles.put(item, getFileCommonInfoFromPath(item));
                     resultsCounter++;
                 }
-                if (resultsCounter < maxResults) {
-                    return FileVisitResult.CONTINUE;
-                } else {
-                    return FileVisitResult.TERMINATE;
-                }
+                return (resultsCounter < maxResults) ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
             }
 
         });
         return foundFiles;
+    }
+
+    /**
+     * Converts file mask to regular expression.
+     *
+     * @param fileNamePattern
+     *         file mask to search
+     * @param caseSensitive
+     *         if {@code false} case insensitive flag will be added to pattern
+     * @param exactMatch
+     *         if {@code true} then require exact match, otherwise substring will be accepted
+     * @return regex pattern for given file mask
+     */
+    private static Pattern convertFileMaskToRegex(String fileNamePattern, boolean caseSensitive, boolean exactMatch) {
+        String namePattern = fileNamePattern.replace(".", "\\.")  // . -> \.  - dot char
+                                            .replace('?', '.')    // ? -> .   - any char
+                                            .replace("*", ".*");  // * -> .*  - any set of chars
+        if (exactMatch) {
+            namePattern = '^' + namePattern + '$';
+        }
+        return caseSensitive ? Pattern.compile(namePattern) : Pattern.compile(namePattern, Pattern.CASE_INSENSITIVE);
     }
 
     /**

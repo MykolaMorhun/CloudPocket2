@@ -430,6 +430,12 @@ public class FilesService {
      *         Name pattern for match files and directories.
      *         * and ? are possible wildcards
      *         Just part of a file name is correct.
+     * @param isCaseSensitive
+     *         if {@code true} then search will be case sensitive.
+     *         {@code false} by default.
+     * @param isExactMatch
+     *         if {@code true} then only files with full match in name will be returned,
+     *         if {@code false} then files which names contain search pattern will be returned
      * @param skipSubfolders
      *         if {@code false} then search for files and directories
      *         exactly inside given directory, no recursive search.
@@ -449,6 +455,8 @@ public class FilesService {
     public Map<String, FileDto> search(String login,
                                        String path,
                                        String namePattern,
+                                       Boolean isCaseSensitive,
+                                       Boolean isExactMatch,
                                        Boolean skipSubfolders,
                                        Integer maxResults) throws IOException {
         if (maxResults != null) {
@@ -461,13 +469,27 @@ public class FilesService {
         if (skipSubfolders == null) {
             skipSubfolders = false;
         }
+        if (isCaseSensitive == null) {
+            isCaseSensitive = true;
+        }
+        if (isExactMatch == null) {
+            isExactMatch = false;
+        }
 
         Path absolutePath = getAbsolutePath(login, path);
         Map <Path, FileDto> searchResult;
         if (skipSubfolders) {
-            searchResult = FSUtils.searchInsideDirectoryOnly(absolutePath, namePattern, maxResults);
+            searchResult = FSUtils.searchInsideDirectoryOnly(absolutePath,
+                                                             namePattern,
+                                                             isCaseSensitive,
+                                                             isExactMatch,
+                                                             maxResults);
         } else {
-            searchResult = FSUtils.searchRecursively(absolutePath, namePattern, maxResults);
+            searchResult = FSUtils.searchRecursively(absolutePath,
+                                                     namePattern,
+                                                     isCaseSensitive,
+                                                     isExactMatch,
+                                                     maxResults);
         }
 
         Map <String, FileDto> results = new HashMap<>();

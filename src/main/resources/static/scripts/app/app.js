@@ -463,9 +463,18 @@ function search_files_callback(data) {
         list_files_error(data);
         return;
     }
-    
+
+    show_notification(function (number_of_found_files) {
+        switch(number_of_found_files) {
+            case 0:
+                return 'Nothing found';
+            case 1:
+                return '1 result found';
+            default:
+                return number_of_found_files + ' results found';
+        }
+    } (Object.keys(data).length));
     current_path_input.val('Search results');
-    show_notification(Object.keys(data).length + ' results found');
     files_table_container.html("");
 
     files_map = {};

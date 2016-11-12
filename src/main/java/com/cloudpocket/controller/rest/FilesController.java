@@ -87,10 +87,10 @@ public class FilesController {
     @RequestMapping(value = "/move", method = RequestMethod.PUT,
                     produces = APPLICATION_JSON_VALUE)
     public String moveFiles(@RequestParam(required = true) String pathFrom,
-                             @RequestParam(required = true) String pathTo,
-                             @RequestParam(required = true) String[] files,
-                             @RequestParam(required = false) Boolean isReplaceIfExist,
-                             @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+                            @RequestParam(required = true) String pathTo,
+                            @RequestParam(required = true) String[] files,
+                            @RequestParam(required = false) Boolean isReplaceIfExist,
+                            @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         int movedFiles  = filesService.moveFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
         JSONObject response = new JSONObject();
         response.put("moved files", movedFiles);
@@ -106,10 +106,9 @@ public class FilesController {
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/rename", method = RequestMethod.PUT)
     public void renameFile(@RequestParam(required = true) String path,
-                          @RequestParam(required = true) String oldName,
-                          @RequestParam(required = true) String newName,
-                          @AuthenticationPrincipal UserDetails userDetails,
-                          HttpServletResponse response) throws IOException {
+                           @RequestParam(required = true) String oldName,
+                           @RequestParam(required = true) String newName,
+                           @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         filesService.rename(userDetails.getUsername(), path, oldName, newName);
     }
 
@@ -266,10 +265,18 @@ public class FilesController {
                     produces = APPLICATION_JSON_VALUE)
     public Map<String, FileDto> search(@RequestParam(required = true) String path,
                                        @RequestParam(required = true) String namePattern,
+                                       @RequestParam(required = false) Boolean isCaseSensitive,
+                                       @RequestParam(required = false) Boolean exactMatch,
                                        @RequestParam(required = false) Boolean skipSubfolders,
                                        @RequestParam(required = false) Integer maxResults,
                                        @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        return filesService.search(userDetails.getUsername(), path, namePattern, skipSubfolders, maxResults);
+        return filesService.search(userDetails.getUsername(),
+                                   path,
+                                   namePattern,
+                                   isCaseSensitive,
+                                   exactMatch,
+                                   skipSubfolders,
+                                   maxResults);
     }
 
     @ApiOperation(value = "Retrieve file info",
