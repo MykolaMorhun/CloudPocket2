@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "integer") // to prevent fails on database validation
     private long id;
 
     @Column
