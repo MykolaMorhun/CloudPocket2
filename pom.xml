@@ -5,7 +5,7 @@
 
 	<groupId>com.cloudpocket</groupId>
 	<artifactId>cloudpocket</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>${cloudpocket.version}</version>
 	<packaging>war</packaging>
 
 	<name>CloudPocket</name>
@@ -21,6 +21,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+
+        <cloudpocket.version>0.1.1-SNAPSHOT</cloudpocket.version>
 	</properties>
 
 	<dependencies>
@@ -89,7 +91,17 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <finalName>CloudPocket-${cloudpocket.version}</finalName>
+                </configuration>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                <finalName>myname</finalName>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
