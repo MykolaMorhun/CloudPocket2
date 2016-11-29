@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -89,7 +90,7 @@ public class FSUtils {
             }
         }
         if (!itemForDelete.delete()) {
-            throw new IOException("Failed to deleteFiles file: " + itemForDelete);
+            throw new IOException("Failed to delete file: '" + itemForDelete + "'.");
         }
     }
 
@@ -106,26 +107,103 @@ public class FSUtils {
      * @param replaceIfExist
      *         if {@code true} then files with same name in target directory will be replaced
      * @return number of copied files
+     * @throws IllegalArgumentException
+     *         if try to copy directory into itself
      * @throws IOException
      *         if error occurs while copying files
      */
     public static int copyFiles(String[] files, Path pathFrom, Path pathTo, boolean replaceIfExist) throws IOException {
+        if (pathFrom.equals(pathTo)) {
+            return 0;
+        }
+
         int counter = 0;
         for (String file : files) {
-            try {
-                if (replaceIfExist) {
-                    Files.copy(pathFrom.resolve(file), pathTo.resolve(file), REPLACE_EXISTING, COPY_ATTRIBUTES);
-                } else {
-                    Files.copy(pathFrom.resolve(file), pathTo.resolve(file), COPY_ATTRIBUTES);
-                }
-                counter++;
-            } catch (FileAlreadyExistsException ignore) {
-                // if we shouldn't replace files, just skip copying of this file
-            } catch (FileNotFoundException ignore) {
-                // if file not found, just skip it
+            if (Files.isDirectory(pathFrom.resolve(file))) {
+                counter += copyDirectoryRecursively(file, pathFrom, pathTo, replaceIfExist);
+            } else {
+                counter += copyFile(file, pathFrom, pathTo, replaceIfExist);
             }
         }
         return counter;
+    }
+
+    /**
+     * Copies directory recursively.
+     *
+     * @param dir
+     *         name of directory to copy recursively
+     * @param pathFrom
+     *         path to parent directory
+     * @param pathTo
+     *         path to destination directory
+     * @param replaceFilesIfExist
+     *         if {@code true} then files with same name in target directory will be replaced
+     * @return number of copied files and directories
+     * @throws IllegalArgumentException
+     *         if try to copy directory into itself
+     * @throws IOException
+     *         if error while copying occurs
+     */
+    private static int copyDirectoryRecursively(String dir,
+                                                Path pathFrom,
+                                                Path pathTo,
+                                                boolean replaceFilesIfExist) throws IOException {
+        Path sourceDirectory = pathFrom.resolve(dir);
+        Path destinationDirectory = pathTo.resolve(dir);
+        if (pathTo.startsWith(sourceDirectory)) {
+            throw new IllegalArgumentException("Cannot copy directory into itself.");
+        }
+
+        int counter = copyFile(dir, pathFrom, pathTo, false); // copy directory with attributes if needed
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(sourceDirectory)) {
+            for (Path fileUnit : directoryStream) {
+                if (Files.isDirectory(fileUnit)) {
+                    counter += copyDirectoryRecursively(fileUnit.getFileName().toString(),
+                                                        sourceDirectory,
+                                                        destinationDirectory,
+                                                        replaceFilesIfExist);
+                } else {
+                    counter += copyFile(fileUnit.getFileName().toString(),
+                                        sourceDirectory,
+                                        destinationDirectory,
+                                        replaceFilesIfExist);
+                }
+            }
+        }
+        return  counter;
+    }
+
+    /**
+     * Copies file.
+     * Keeps file attributes.
+     *
+     * @param file
+     *         name of file to copy
+     * @param pathFrom
+     *         path to directory in which specified file is located
+     * @param pathTo
+     *         path to directory in which specified file will be copied
+     * @param replaceIfExist
+     *          if {@code true} then files with same name in target directory will be replaced
+     * @return 1 if file copied and 0 otherwise
+     * @throws IOException
+     *         if error while copying occurs
+     */
+    private static int copyFile(String file, Path pathFrom, Path pathTo, boolean replaceIfExist) throws IOException {
+        try {
+            if (replaceIfExist) {
+                Files.copy(pathFrom.resolve(file), pathTo.resolve(file), REPLACE_EXISTING, COPY_ATTRIBUTES);
+            } else {
+                Files.copy(pathFrom.resolve(file), pathTo.resolve(file), COPY_ATTRIBUTES);
+            }
+            return 1;
+        } catch (FileAlreadyExistsException ignore) {
+            // if we shouldn't replace files, just skip copying of this file
+        } catch (FileNotFoundException ignore) {
+            // if file not found, just skip it
+        }
+        return 0;
     }
 
     /**
@@ -326,6 +404,7 @@ public class FSUtils {
      *         path to file or directory
      * @return detailed information about file system item
      * @throws IOException
+     *         if any error occurs
      */
     public static FileDetails getDetailedInfoFromPath(Path item) throws IOException {
         File file = item.toFile();
