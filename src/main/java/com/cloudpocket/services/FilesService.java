@@ -8,6 +8,7 @@ import com.cloudpocket.model.enums.FilesOrder;
 import com.cloudpocket.utils.FSUtils;
 import com.cloudpocket.utils.FilesSorter;
 import com.cloudpocket.utils.StreamUtils;
+import com.cloudpocket.utils.Utils;
 import com.cloudpocket.utils.ZipUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,21 +22,17 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.cloudpocket.utils.Utils.firstIfNotNull;
-import static com.cloudpocket.utils.Utils.getCurrentDate;
 
 @Component
 public class FilesService {
 
     private static final int SEARCH_MAX_RESULTS = 250;
-    private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh-mm-ss");
 
     @Value("${cloudpocket.storage}")
     private String PATH_TO_STORAGE;
@@ -258,7 +255,7 @@ public class FilesService {
             case ZIP:
                 return ZipUtils.zip(absolutePath,
                                     files,
-                                    firstIfNotNull(archiveName, getCurrentDate(FILE_DATE_FORMAT) + ".zip"));
+                                    firstIfNotNull(archiveName, Utils.getCurrentDateTime() + ".zip"));
             case RAR:
                 throw new UnsupportedOperationException();
             default:
@@ -362,7 +359,7 @@ public class FilesService {
                                        String[] files,
                                        OutputStream outputStream) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
-        String archiveName = new Date().toString() + ".zip";
+        String archiveName = Utils.getCurrentDateTime() + ".zip";
         ZipUtils.zip(absolutePath, files, archiveName);
         Path pathToArchive = absolutePath.resolve(archiveName);
         StreamUtils.writeFileToOutputStream(pathToArchive, outputStream);

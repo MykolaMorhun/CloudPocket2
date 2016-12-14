@@ -32,13 +32,22 @@ public class Utils {
      * @param dateFormat
      *         formatter which should format current date/time
      *         or null for default format
-     * @return current  time
+     * @return current date in specified format
      */
-    public static String getCurrentDate(SimpleDateFormat dateFormat) {
+    public static String getCurrentDateTime(SimpleDateFormat dateFormat) {
         if (dateFormat == null) {
             return new Date().toString();
         }
         return dateFormat.format(new Date());
+    }
+
+    private static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");
+    /**
+     * The same as {@link #getCurrentDateTime(SimpleDateFormat)}, but uses predefined date format.
+     * @return current date and time in format: <i>year-month-day hour-minute-second</i>
+     */
+    public static String getCurrentDateTime() {
+        return DEFAULT_DATE_FORMAT.format(new Date());
     }
 
 }

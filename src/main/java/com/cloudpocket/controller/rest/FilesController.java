@@ -27,10 +27,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.cloudpocket.utils.Utils.getCurrentDateTime;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -221,7 +221,11 @@ public class FilesController {
                                        @AuthenticationPrincipal UserDetails userDetails,
                                        HttpServletResponse response) throws IOException {
         response.setContentType("application/zip");
-        response.setHeader("Content-disposition", "attachment; filename=\"" + new Date() + ".zip\"");
+        if (files.length == 1) {
+            response.setHeader("Content-disposition", "attachment; filename=\"" + files[0] + ".zip\"");
+        } else {
+            response.setHeader("Content-disposition", "attachment; filename=\"" + getCurrentDateTime() + ".zip\"");
+        }
         filesService.downloadFilesInArchive(userDetails.getUsername(), path, files, response.getOutputStream());
     }
 
