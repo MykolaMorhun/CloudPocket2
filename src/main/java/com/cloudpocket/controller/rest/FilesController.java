@@ -1,5 +1,6 @@
 package com.cloudpocket.controller.rest;
 
+import com.cloudpocket.exceptions.BadRequestException;
 import com.cloudpocket.model.FileDetails;
 import com.cloudpocket.model.dto.FileDto;
 import com.cloudpocket.model.enums.ArchiveType;
@@ -194,6 +195,9 @@ public class FilesController {
                              @AuthenticationPrincipal UserDetails userDetails,
                              HttpServletResponse response) throws IOException {
         Path pathToFile = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, file);
+        if (Files.isDirectory(pathToFile)) {
+            throw new BadRequestException("Cannot download folder as a file");
+        }
         response.setContentType(Files.probeContentType(pathToFile));
         if (inline != Boolean.TRUE) {
             response.setHeader("Content-disposition", "attachment; filename=\"" + pathToFile.getFileName() + "\"");

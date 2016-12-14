@@ -1,5 +1,6 @@
 package com.cloudpocket.controller.rest;
 
+import com.cloudpocket.exceptions.BadRequestException;
 import com.cloudpocket.exceptions.ForbiddenException;
 import com.cloudpocket.model.dto.ErrorResponseDto;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(new ErrorResponseDto(CONFLICT), CONFLICT);
     }
 
+    @ExceptionHandler(value = UnsupportedOperationException.class)
     protected ResponseEntity<Object> handleUnsupportedOperationException(UnsupportedOperationException e) {
         return new ResponseEntity<>(new ErrorResponseDto(UNSUPPORTED_MEDIA_TYPE), UNSUPPORTED_MEDIA_TYPE);
     }
@@ -52,6 +54,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = IOException.class)
     protected ResponseEntity<Object> handleInternalServerError(IOException e) {
         return new ResponseEntity<>(new ErrorResponseDto(INTERNAL_SERVER_ERROR), INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = com.cloudpocket.exceptions.BadRequestException.class)
+    protected ResponseEntity<Object> handleInternalServerError(BadRequestException e) {
+        return new ResponseEntity<>(new ErrorResponseDto(BAD_REQUEST), BAD_REQUEST);
     }
 
 }

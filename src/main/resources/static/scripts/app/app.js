@@ -258,7 +258,7 @@ function on_download_button_click() {
         alert('No files selected');
         return;
     }
-    if (app_state.selected_files_list.length === 1) {
+    if (app_state.selected_files_list.length === 1 && files_map[app_state.selected_files_list[0]].directory === false) {
         download_file_request(download_file_callback, app_state.current_path, app_state.selected_files_list[0]);
     } else {
         download_structure_request(download_structure_callback, app_state.current_path, app_state.selected_files_list);
