@@ -29,8 +29,9 @@ public class ZipUtils {
      */
     public static int zip(Path path, String[] files, String zipName) throws IOException {
         int counter = 0;
+        ZipFile zipFile = null;
         try {
-            ZipFile zipFile = new ZipFile(path + "/" + zipName);
+            zipFile = new ZipFile(path + "/" + zipName);
 
             ZipParameters parameters = new ZipParameters();
             parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
@@ -51,6 +52,9 @@ public class ZipUtils {
                 }
             }
         } catch (ZipException e) {
+            if (zipFile != null) {
+                zipFile.getFile().delete();
+            }
             throw new IOException(e);
         }
         return counter;

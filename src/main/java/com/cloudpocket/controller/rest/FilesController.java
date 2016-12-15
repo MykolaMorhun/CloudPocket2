@@ -124,7 +124,7 @@ public class FilesController {
     public String deleteFiles(@RequestParam(required = true) String path,
                               @RequestParam(required = true) String[] files,
                               @AuthenticationPrincipal UserDetails userDetails) throws FileNotFoundException {
-        int deletedFiles =  filesService.deleteFiles(userDetails.getUsername(), path, files);
+        int deletedFiles = filesService.deleteFiles(userDetails.getUsername(), path, files);
         JSONObject response = new JSONObject();
         response.put("deleted files", deletedFiles);
         return response.toString();
@@ -195,6 +195,9 @@ public class FilesController {
                              @AuthenticationPrincipal UserDetails userDetails,
                              HttpServletResponse response) throws IOException {
         Path pathToFile = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, file);
+        if (!Files.exists(pathToFile)) {
+            throw new FileNotFoundException("File '" + pathToFile + "' doesn't exists");
+        }
         if (Files.isDirectory(pathToFile)) {
             throw new BadRequestException("Cannot download folder as a file");
         }
@@ -220,13 +223,21 @@ public class FilesController {
                                        @RequestParam(required = true) String[] files,
                                        @AuthenticationPrincipal UserDetails userDetails,
                                        HttpServletResponse response) throws IOException {
+        String archiveName = getCurrentDateTime() + ".zip";
+        Path absolutePath = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, archiveName);
         response.setContentType("application/zip");
         if (files.length == 1) {
             response.setHeader("Content-disposition", "attachment; filename=\"" + files[0] + ".zip\"");
         } else {
-            response.setHeader("Content-disposition", "attachment; filename=\"" + getCurrentDateTime() + ".zip\"");
+            response.setHeader("Content-disposition", "attachment; filename=\"" + archiveName + ".zip\"");
         }
-        filesService.downloadFilesInArchive(userDetails.getUsername(), path, files, response.getOutputStream());
+        try {
+            filesService.createArchive(userDetails.getUsername(), path, files, archiveName, ArchiveType.ZIP);
+            response.setContentLengthLong(Files.size(absolutePath));
+            filesService.downloadFile(absolutePath, response.getOutputStream());
+        } finally {
+            Files.delete(absolutePath);
+        }
     }
 
     @ApiOperation(value = "Upload file",
@@ -242,7 +253,13 @@ public class FilesController {
                            @RequestParam(required = true) String path,
                            @RequestParam(required = false) String name,
                            @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        filesService.uploadFile(userDetails.getUsername(), path, name, file);
+        if (file.isEmpty()) {
+            throw new BadRequestException("Cannot receive an empty file");
+        }
+        if (name == null) {
+            name = file.getOriginalFilename();
+        }
+        filesService.uploadFile(userDetails.getUsername(), path, name, file.getInputStream());
     }
 
     @ApiOperation(value = "Upload file structure",
@@ -259,7 +276,14 @@ public class FilesController {
                                 @RequestParam(required = true) String path,
                                 @RequestParam(required = false) Boolean skipSubfolder,
                                 @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        filesService.uploadFileStructure(userDetails.getUsername(), path, file, skipSubfolder);
+        if (file.isEmpty()) {
+            throw new BadRequestException("Cannot receive an empty file");
+        }
+        filesService.uploadFileStructure(userDetails.getUsername(),
+                                         path,
+                                         file.getOriginalFilename(),
+                                         file.getInputStream(),
+                                         skipSubfolder);
     }
 
     @ApiOperation(value = "Search",

@@ -8,14 +8,13 @@ import com.cloudpocket.model.enums.FilesOrder;
 import com.cloudpocket.utils.FSUtils;
 import com.cloudpocket.utils.FilesSorter;
 import com.cloudpocket.utils.StreamUtils;
-import com.cloudpocket.utils.Utils;
 import com.cloudpocket.utils.ZipUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
@@ -186,10 +185,10 @@ public class FilesService {
      *         actual name of file for renaming
      * @param newName
      *         new file name
-     * @throws IOException
-     *         if an error occurs while renaming file
      * @throws FileNotFoundException
      *         if file in specified location doesn't exist
+     * @throws IOException
+     *         if an error occurs while renaming file
      */
     public void rename(String login,
                        String path,
@@ -216,7 +215,7 @@ public class FilesService {
      * @throws FileNotFoundException
      *         if directory which must contains files doesn't exist
      */
-    public Integer deleteFiles(String login, String path, String[] files) throws FileNotFoundException {
+    public int deleteFiles(String login, String path, String[] files) throws FileNotFoundException {
         Path absolutePath = getAbsolutePath(login, path);
         return FSUtils.deleteFiles(absolutePath, files);
     }
@@ -253,9 +252,7 @@ public class FilesService {
 
         switch (archiveType) {
             case ZIP:
-                return ZipUtils.zip(absolutePath,
-                                    files,
-                                    firstIfNotNull(archiveName, Utils.getCurrentDateTime() + ".zip"));
+                return ZipUtils.zip(absolutePath, files, archiveName);
             case RAR:
                 throw new UnsupportedOperationException();
             default:
@@ -332,38 +329,14 @@ public class FilesService {
      *         absolute path to file for download
      * @param outputStream
      *         stream to write file to
-     * @throws IOException
      * @throws FileNotFoundException
      *         if file to download doesn't exist
      *         or directory which must contains the file doesn't exist
+     * @throws IOException
+     *         if an error occurs while sending file
      */
     public void downloadFile(Path pathToFile, OutputStream outputStream) throws IOException {
         StreamUtils.writeFileToOutputStream(pathToFile, outputStream);
-    }
-
-    /**
-     * Sends files in zip archive to user.
-     *
-     * @param login
-     *         user's login
-     * @param path
-     *         absolute path to directory in which files are located
-     * @param files
-     *         list of file to download
-     * @param outputStream
-     *         stream for write
-     * @throws IOException
-     */
-    public void downloadFilesInArchive(String login,
-                                       String path,
-                                       String[] files,
-                                       OutputStream outputStream) throws IOException {
-        Path absolutePath = getAbsolutePath(login, path);
-        String archiveName = Utils.getCurrentDateTime() + ".zip";
-        ZipUtils.zip(absolutePath, files, archiveName);
-        Path pathToArchive = absolutePath.resolve(archiveName);
-        StreamUtils.writeFileToOutputStream(pathToArchive, outputStream);
-        FSUtils.delete(pathToArchive);
     }
 
     /**
@@ -377,20 +350,18 @@ public class FilesService {
      *         name of the file
      * @param file
      *         file content
+     * @return absolute path on server's file system to received file
      * @throws IOException
+     *         if an error occurs while receiving and saving file
      */
-    public void uploadFile(String login, String path, String name, MultipartFile file) throws IOException {
-        if (! file.isEmpty()) {
-            if (name == null) {
-                name = file.getOriginalFilename();
-            }
-            Path absolutePath = getAbsolutePath(login, path);
-            StreamUtils.writeInputStreamToFile(absolutePath.resolve(name), file.getInputStream());
-        }
+    public Path uploadFile(String login, String path, String name, InputStream file) throws IOException {
+        Path absolutePath = getAbsolutePath(login, path).resolve(name);
+        StreamUtils.writeInputStreamToFile(absolutePath, file);
+        return absolutePath;
     }
 
     /**
-     * Saves data from archive
+     * Saves data from archive.
      *
      * @param login
      *         user's login
@@ -400,17 +371,19 @@ public class FilesService {
      *         archive with file structure
      * @param skipSubfolder
      *         if {@code false} then save file structure directly in the specified directory
+     * @throws IllegalArgumentException
+     *         if given file isn't valid zip archive
      * @throws IOException
+     *         if an error occurs while receiving and saving archive
      */
-    public void uploadFileStructure(String login, String path, MultipartFile file, Boolean skipSubfolder)
-            throws IOException {
-        if (! file.isEmpty()) {
-            Path absolutePath = getAbsolutePath(login, path);
-            String name = file.getOriginalFilename();
-            StreamUtils.writeInputStreamToFile(absolutePath.resolve(name), file.getInputStream());
-            ZipUtils.unzip(absolutePath, name, ! firstIfNotNull(skipSubfolder, true));
-            Files.delete(absolutePath.resolve(name));
-        }
+    public void uploadFileStructure(String login,
+                                    String path,
+                                    String name,
+                                    InputStream file,
+                                    Boolean skipSubfolder) throws IOException {
+            Path absolutePathToArchive = uploadFile(login, path, name, file);
+            ZipUtils.unzip(absolutePathToArchive.getParent(), name, ! firstIfNotNull(skipSubfolder, true));
+            Files.delete(absolutePathToArchive);
     }
 
     /**
@@ -547,7 +520,6 @@ public class FilesService {
 
     /**
      * Returns absolute path to user's file.
-     * File must exists.
      *
      * @param login
      *         user's login
@@ -562,7 +534,7 @@ public class FilesService {
      *         if path exits from user's home directory
      */
     public Path getAbsolutePathToFile(String login, String path, String filename) throws FileNotFoundException {
-        return getAbsolutePath(login, path + '/' + filename);
+        return pathInsideUserHomeDirectory(login, path + '/' + filename);
     }
 
     /**
