@@ -1,7 +1,7 @@
 
 var app_state = {
     current_path: '/',
-    files_order: 'Name',
+    files_order: 'NAME',
     files_reverse: false,
 
     selected_files_list: [],
@@ -37,10 +37,10 @@ function find_elements() {
     current_path_input = $('#current-path-input');
     search_input = $('#search-input');
 
-    files_orders['Type'] = $('#type-column');
-    files_orders['Name'] = $('#name-column');
-    files_orders['Size'] = $('#size-column');
-    files_orders['Creation date'] = $('#date-column');
+    files_orders['TYPE'] = $('#type-column');
+    files_orders['NAME'] = $('#name-column');
+    files_orders['SIZE'] = $('#size-column');
+    files_orders['CREATION_DATE'] = $('#date-column');
 
     file_input = $('#file_input');
     check_all_button = $('#check-all');
@@ -150,7 +150,7 @@ function toggle_all_checkboxes() {
 }
 
 function changeFilesOrder(elem) {
-    var newOrder = elem.target.innerText;
+    var newOrder = $(elem.target).attr('order');
     var oldOrder = app_state.files_order;
     if (newOrder === oldOrder) {
         app_state.files_reverse = ! app_state.files_reverse;

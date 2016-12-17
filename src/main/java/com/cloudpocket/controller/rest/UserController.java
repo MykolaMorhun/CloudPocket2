@@ -31,7 +31,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    private final SimpleDateFormat JOIN_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+    private final SimpleDateFormat JOIN_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     @ApiOperation(value = "Get information about user",
                   notes = "Gets information about current user")

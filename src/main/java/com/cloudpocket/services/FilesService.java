@@ -92,9 +92,7 @@ public class FilesService {
      * @param path
      *         path to directory
      * @param sortOrder
-     *         files sort order
-     *         Valid values are: 'NAME', 'SIZE', 'TYPE', 'DATE'
-     *         If value is wrong or not set, then uses order by 'NAME'.
+     *         sort order for returning file list
      * @param isReverse
      *         if {@code true} then sorts in descending mode, ascending otherwise.
      * @return list of files in given directory
@@ -103,7 +101,10 @@ public class FilesService {
      * @throws IOException
      *         if error occurs while reading data from the file system
      */
-    public List<FileDto> listFiles(String login, String path, String sortOrder, Boolean isReverse) throws IOException {
+    public List<FileDto> listFiles(String login,
+                                   String path,
+                                   FilesOrder sortOrder,
+                                   boolean isReverse) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
         List<FileDto> files = new ArrayList<>();
@@ -113,8 +114,7 @@ public class FilesService {
             }
         }
 
-        FilesOrder order = FilesOrder.thisOrDefault(sortOrder);
-        return FilesSorter.sortFiles(files, order, firstIfNotNull(isReverse, false));
+        return FilesSorter.sortFiles(files, sortOrder, isReverse);
     }
 
     /**

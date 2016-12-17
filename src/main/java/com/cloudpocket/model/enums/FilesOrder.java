@@ -7,7 +7,7 @@ public enum FilesOrder {
     NAME,
     TYPE,
     SIZE,
-    DATE;
+    CREATION_DATE;
 
     public static FilesOrder thisOrDefault(String sortOrder) {
         FilesOrder order;

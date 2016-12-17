@@ -18,7 +18,7 @@ public class FileDto {
     private boolean directory;
     /** size in bytes */
     private long size;
-    /** creation date in format: */
+    /** creation date in format: 'dd.MM.yyyy HH:mm:ss' as string */
     private String creationDate;
     /** creation date in long format */
     private long creationDateLong;

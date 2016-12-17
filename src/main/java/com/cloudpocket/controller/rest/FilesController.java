@@ -4,6 +4,7 @@ import com.cloudpocket.exceptions.BadRequestException;
 import com.cloudpocket.model.FileDetails;
 import com.cloudpocket.model.dto.FileDto;
 import com.cloudpocket.model.enums.ArchiveType;
+import com.cloudpocket.model.enums.FilesOrder;
 import com.cloudpocket.services.FilesService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -54,9 +55,12 @@ public class FilesController {
     @RequestMapping(value = "/list", method = RequestMethod.GET,
                     produces = APPLICATION_JSON_VALUE)
     public List<FileDto> getFilesList(@RequestParam(required =  true) String path,
-                                      @RequestParam(required = false) String order,
+                                      @RequestParam(required = false) FilesOrder order,
                                       @RequestParam(required = false) Boolean isReverse,
                                       @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        if (order == null) {
+            order = FilesOrder.NAME;
+        }
         return filesService.listFiles(userDetails.getUsername(), path, order, isReverse);
     }
 

@@ -36,7 +36,7 @@ public class FilesSorter {
             case TYPE:
                 Collections.sort(files, comparatorByType);
                 break;
-            case DATE:
+            case CREATION_DATE:
                 Collections.sort(files, comparatorByDate);
                 break;
             default:
