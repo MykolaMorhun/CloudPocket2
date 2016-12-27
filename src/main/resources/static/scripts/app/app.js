@@ -170,9 +170,10 @@ function upload_file() {
     }
 
     app_state.is_file_uploading = true;
+    var filename;
     $('#upload_file_form').ajaxSubmit({
         beforeSend: function() {
-            var filename = $('#file_input').val().split('[\\/]').pop();
+            filename = $('#file_input').val().split('[\\/]').pop();
             upload_file_popup_reset(filename);
         },
         uploadProgress: function(event, position, total, percentComplete) {
@@ -180,12 +181,13 @@ function upload_file() {
         },
         success: function () {
             upload_file_popup_success();
-            
+            show_notification('File \'' + filename + '\' uploaded successfully');
+
             update_files_list();
         },
         error: function () {
             upload_file_popup_error();
-            alert('Error while sending file to server');
+            alert('Error while sending \'' + filename + '\' file to server');
         },
         complete: function () {
             app_state.is_file_uploading = false;
