@@ -1,0 +1,10 @@
+
+.custom-background-texture {
+    background-repeat: repeat;
+}
+
+.custom-background-image {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}

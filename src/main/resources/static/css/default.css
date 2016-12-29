@@ -1,5 +1,6 @@
-body {
+.default-background {
     background-image: url("/images/background.jpeg");
+    background-repeat: repeat;
 }
 
 #footer {

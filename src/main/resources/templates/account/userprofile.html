@@ -12,7 +12,7 @@
     <script th:src="@{/scripts/app/cloud_pocket_client.js}"></script>
     <script th:src="@{/scripts/app/user_profile.js}"></script>
 </head>
-<body>
+<body class="default-background">
     <div th:replace="snippets/userprofile_toolbar :: profile-toolbar"></div>
 
     <div class="container">
@@ -43,5 +43,10 @@
     </div>
 
     <div th:replace="snippets/common :: footer"></div>
+
+    <span id="plugins">
+        <script th:src="@{/scripts/app/plugins/background.js}"></script>
+        <link th:href="@{/css/plugins/background.css}" rel="stylesheet"/>
+    </span>
 </body>
 </html>
