@@ -200,7 +200,7 @@ public class FilesController {
                              HttpServletResponse response) throws IOException {
         Path pathToFile = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, file);
         if (!Files.exists(pathToFile)) {
-            throw new FileNotFoundException("File '" + pathToFile + "' doesn't exists");
+            throw new FileNotFoundException("File '" + file + "' doesn't exist in '" + path + '\'');
         }
         if (Files.isDirectory(pathToFile)) {
             throw new BadRequestException("Cannot download folder as a file");

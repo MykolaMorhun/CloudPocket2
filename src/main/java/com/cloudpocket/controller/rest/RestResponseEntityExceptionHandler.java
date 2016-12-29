@@ -2,10 +2,9 @@ package com.cloudpocket.controller.rest;
 
 import com.cloudpocket.exceptions.BadRequestException;
 import com.cloudpocket.exceptions.ForbiddenException;
-import com.cloudpocket.model.dto.ErrorResponseDto;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -23,42 +22,54 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 /**
  * Exception handling controller for REST API
  */
+@RestController
 @ControllerAdvice(annotations = RestController.class)
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(value = IllegalArgumentException.class)
-    protected ResponseEntity<Object> handleBadReauest(IllegalArgumentException e) {
-        return new ResponseEntity<>(new ErrorResponseDto(BAD_REQUEST), BAD_REQUEST);
+    protected String handleBadReauest(IllegalArgumentException e) {
+        return errorMessageToJson(e.getMessage());
     }
 
+    @ResponseStatus(FORBIDDEN)
     @ExceptionHandler(value = ForbiddenException.class)
-    protected ResponseEntity<Object> handleForbidden(ForbiddenException e) {
-        return new ResponseEntity<>(new ErrorResponseDto(FORBIDDEN), FORBIDDEN);
+    protected String handleForbidden(ForbiddenException e) {
+        return errorMessageToJson(e.getMessage());
     }
 
+    @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(value = FileNotFoundException.class)
-    protected ResponseEntity<Object> handleNotFound(FileNotFoundException e) {
-        return new ResponseEntity<>(new ErrorResponseDto(NOT_FOUND), NOT_FOUND);
+    protected String handleNotFound(FileNotFoundException e) {
+        return errorMessageToJson(e.getMessage());
     }
 
+    @ResponseStatus(CONFLICT)
     @ExceptionHandler(value = FileAlreadyExistsException.class)
-    protected ResponseEntity<Object> handleConflict(FileAlreadyExistsException e) {
-        return new ResponseEntity<>(new ErrorResponseDto(CONFLICT), CONFLICT);
+    protected String handleConflict(FileAlreadyExistsException e) {
+        return errorMessageToJson(e.getMessage());
     }
 
+    @ResponseStatus(UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(value = UnsupportedOperationException.class)
-    protected ResponseEntity<Object> handleUnsupportedOperationException(UnsupportedOperationException e) {
-        return new ResponseEntity<>(new ErrorResponseDto(UNSUPPORTED_MEDIA_TYPE), UNSUPPORTED_MEDIA_TYPE);
+    protected String handleUnsupportedOperationException(UnsupportedOperationException e) {
+        return errorMessageToJson(e.getMessage());
     }
 
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = IOException.class)
-    protected ResponseEntity<Object> handleInternalServerError(IOException e) {
-        return new ResponseEntity<>(new ErrorResponseDto(INTERNAL_SERVER_ERROR), INTERNAL_SERVER_ERROR);
+    protected String handleInternalServerError(IOException e) {
+        return errorMessageToJson(e.getMessage());
     }
 
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(value = com.cloudpocket.exceptions.BadRequestException.class)
-    protected ResponseEntity<Object> handleInternalServerError(BadRequestException e) {
-        return new ResponseEntity<>(new ErrorResponseDto(BAD_REQUEST), BAD_REQUEST);
+    protected String handleInternalServerError(BadRequestException e) {
+        return errorMessageToJson(e.getMessage());
+    }
+
+    private String errorMessageToJson(String errMessage) {
+        return "{\"error\":\"" + errMessage + "\"}";
     }
 
 }
