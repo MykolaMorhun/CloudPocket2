@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import static com.cloudpocket.utils.Utils.firstIfNotNull;
 import static com.cloudpocket.utils.Utils.getCurrentDateTime;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -58,10 +59,10 @@ public class FilesController {
                                       @RequestParam(required = false) FilesOrder order,
                                       @RequestParam(required = false) Boolean isReverse,
                                       @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        if (order == null) {
-            order = FilesOrder.NAME;
-        }
-        return filesService.listFiles(userDetails.getUsername(), path, order, isReverse);
+        return filesService.listFiles(userDetails.getUsername(),
+                                      path,
+                                      firstIfNotNull(order, FilesOrder.NAME),
+                                      firstIfNotNull(isReverse, false));
     }
 
     @ApiOperation(value = "Copy files",
@@ -77,7 +78,11 @@ public class FilesController {
                             @RequestParam(required = true) String[] files,
                             @RequestParam(required = false) Boolean isReplaceIfExist,
                             @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        int copiedFiles = filesService.copyFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
+        int copiedFiles = filesService.copyFiles(userDetails.getUsername(),
+                                                 pathFrom,
+                                                 pathTo,
+                                                 files,
+                                                 firstIfNotNull(isReplaceIfExist, true));
         JSONObject response = new JSONObject();
         response.put("copied files", copiedFiles);
         return response.toString();
@@ -96,7 +101,11 @@ public class FilesController {
                             @RequestParam(required = true) String[] files,
                             @RequestParam(required = false) Boolean isReplaceIfExist,
                             @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        int movedFiles  = filesService.moveFiles(userDetails.getUsername(), pathFrom, pathTo, files, isReplaceIfExist);
+        int movedFiles  = filesService.moveFiles(userDetails.getUsername(),
+                                                 pathFrom,
+                                                 pathTo,
+                                                 files,
+                                                 firstIfNotNull(isReplaceIfExist, true));
         JSONObject response = new JSONObject();
         response.put("moved files", movedFiles);
         return response.toString();
@@ -147,7 +156,19 @@ public class FilesController {
                               @RequestParam(required = false) String archiveName,
                               @RequestParam(required = false) ArchiveType archiveType,
                               @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        filesService.createArchive(userDetails.getUsername(), path, files, archiveName, archiveType);
+        if (archiveName == null) {
+            if (files.length == 1) {
+                archiveName = files[0];
+            } else {
+                archiveName = getCurrentDateTime();
+            }
+            archiveName += ".zip";
+        }
+        filesService.createArchive(userDetails.getUsername(),
+                                   path,
+                                   files,
+                                   archiveName,
+                                   firstIfNotNull(archiveType, ArchiveType.ZIP));
     }
 
     @ApiOperation(value = "Extract files",
@@ -167,7 +188,7 @@ public class FilesController {
                                        path,
                                        archiveName,
                                        archiveType,
-                                       extractIntoSubdirectory);
+                                       firstIfNotNull(extractIntoSubdirectory, true));
     }
 
     @ApiOperation(value = "Create directory",
@@ -227,7 +248,7 @@ public class FilesController {
                                        @RequestParam(required = true) String[] files,
                                        @AuthenticationPrincipal UserDetails userDetails,
                                        HttpServletResponse response) throws IOException {
-        String archiveName = getCurrentDateTime() + ".zip";
+        String archiveName = getCurrentDateTime();
         Path absolutePath = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, archiveName);
         response.setContentType("application/zip");
         if (files.length == 1) {
@@ -257,13 +278,10 @@ public class FilesController {
                            @RequestParam(required = true) String path,
                            @RequestParam(required = false) String name,
                            @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        if (file.isEmpty()) {
-            throw new BadRequestException("Cannot receive an empty file");
-        }
-        if (name == null) {
-            name = file.getOriginalFilename();
-        }
-        filesService.uploadFile(userDetails.getUsername(), path, name, file.getInputStream());
+        filesService.uploadFile(userDetails.getUsername(),
+                                path,
+                                firstIfNotNull(name, file.getOriginalFilename()),
+                                file.getInputStream());
     }
 
     @ApiOperation(value = "Upload file structure",
@@ -281,13 +299,13 @@ public class FilesController {
                                 @RequestParam(required = false) Boolean skipSubfolder,
                                 @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         if (file.isEmpty()) {
-            throw new BadRequestException("Cannot receive an empty file");
+            throw new BadRequestException("Cannot receive an empty files structure");
         }
         filesService.uploadFileStructure(userDetails.getUsername(),
                                          path,
                                          file.getOriginalFilename(),
                                          file.getInputStream(),
-                                         skipSubfolder);
+                                         firstIfNotNull(skipSubfolder, false));
     }
 
     @ApiOperation(value = "Search",
@@ -303,15 +321,20 @@ public class FilesController {
                                        @RequestParam(required = true) String namePattern,
                                        @RequestParam(required = false) Boolean isCaseSensitive,
                                        @RequestParam(required = false) Boolean exactMatch,
-                                       @RequestParam(required = false) Boolean skipSubfolders,
+                                       @RequestParam(required = false) Boolean recursive,
                                        @RequestParam(required = false) Integer maxResults,
                                        @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        if (maxResults == null) {
+            maxResults = 50;
+        } else if (maxResults < 1) {
+            throw new BadRequestException("Max results parameter should be positive");
+        }
         return filesService.search(userDetails.getUsername(),
                                    path,
                                    namePattern,
-                                   isCaseSensitive,
-                                   exactMatch,
-                                   skipSubfolders,
+                                   firstIfNotNull(isCaseSensitive, false),
+                                   firstIfNotNull(exactMatch, false),
+                                   firstIfNotNull(recursive, true),
                                    maxResults);
     }
 

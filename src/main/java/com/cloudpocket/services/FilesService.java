@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.cloudpocket.utils.Utils.firstIfNotNull;
-
 @Component
 public class FilesService {
 
@@ -139,11 +137,11 @@ public class FilesService {
                          String fromDirectory,
                          String toDirectory,
                          String[] files,
-                         Boolean replaceIfExist) throws IOException {
+                         boolean replaceIfExist) throws IOException {
         Path pathFrom = getAbsolutePath(login, fromDirectory);
         Path pathTo = getAbsolutePath(login, toDirectory);
 
-        return FSUtils.copyFiles(files, pathFrom, pathTo, firstIfNotNull(replaceIfExist, false));
+        return FSUtils.copyFiles(files, pathFrom, pathTo, replaceIfExist);
     }
 
     /**
@@ -167,11 +165,11 @@ public class FilesService {
                          String fromDirectory,
                          String toDirectory,
                          String[] files,
-                         Boolean replaceIfExist) throws IOException {
+                         boolean replaceIfExist) throws IOException {
         Path pathFrom = getAbsolutePath(login, fromDirectory);
         Path pathTo = getAbsolutePath(login, toDirectory);
 
-        return FSUtils.moveFiles(files, pathFrom, pathTo, firstIfNotNull(replaceIfExist, false));
+        return FSUtils.moveFiles(files, pathFrom, pathTo, replaceIfExist);
     }
 
     /**
@@ -246,10 +244,6 @@ public class FilesService {
                              ArchiveType archiveType) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
-        if (archiveType == null) {
-            archiveType = ArchiveType.ZIP;
-        }
-
         switch (archiveType) {
             case ZIP:
                 return ZipUtils.zip(absolutePath, files, archiveName);
@@ -283,15 +277,12 @@ public class FilesService {
                                   String path,
                                   String archiveName,
                                   ArchiveType archiveType,
-                                  Boolean extractIntoSubdirectory) throws IOException {
+                                  boolean extractIntoSubdirectory) throws IOException {
         Path absolutePath = getAbsolutePath(login, path);
 
-        if (archiveType == null) {
-            archiveType = ArchiveType.ZIP;
-        }
         switch (archiveType) {
             case ZIP:
-                ZipUtils.unzip(absolutePath, archiveName, firstIfNotNull(extractIntoSubdirectory, true));
+                ZipUtils.unzip(absolutePath, archiveName, extractIntoSubdirectory);
                 break;
             case RAR:
                 throw new UnsupportedOperationException();
@@ -380,9 +371,9 @@ public class FilesService {
                                     String path,
                                     String name,
                                     InputStream file,
-                                    Boolean skipSubfolder) throws IOException {
+                                    boolean skipSubfolder) throws IOException {
             Path absolutePathToArchive = uploadFile(login, path, name, file);
-            ZipUtils.unzip(absolutePathToArchive.getParent(), name, ! firstIfNotNull(skipSubfolder, true));
+            ZipUtils.unzip(absolutePathToArchive.getParent(), name, !skipSubfolder);
             Files.delete(absolutePathToArchive);
     }
 
@@ -398,22 +389,20 @@ public class FilesService {
      *         absolute path to directory to search in
      * @param namePattern
      *         Name pattern for match files and directories.
-     *         * and ? are possible wildcards
-     *         Just part of a file name is correct.
+     *         * and ? are possible wildcards.
+     *         Just part of a file name is correct
      * @param isCaseSensitive
-     *         if {@code true} then search will be case sensitive.
-     *         {@code false} by default.
+     *         if {@code true} then search will be case sensitive
      * @param isExactMatch
      *         if {@code true} then only files with full match in name will be returned,
      *         if {@code false} then files which names contain search pattern will be returned
-     * @param skipSubfolders
+     * @param recursive
      *         if {@code false} then search for files and directories
-     *         exactly inside given directory, no recursive search.
-     *         {@code false} by default.
+     *         exactly inside given directory, no recursive search
      * @param maxResults
      *         maximal number of results.
      *         If it exceed then search stops and returns result.
-     *         Returns no more than 50 results by default.
+     *         Returns no more than 50 results by default
      * @return search results
      * @throws FileNotFoundException
      *         if directory to search in doesn't exist
@@ -425,41 +414,28 @@ public class FilesService {
     public Map<String, FileDto> search(String login,
                                        String path,
                                        String namePattern,
-                                       Boolean isCaseSensitive,
-                                       Boolean isExactMatch,
-                                       Boolean skipSubfolders,
-                                       Integer maxResults) throws IOException {
-        if (maxResults != null) {
-            if (maxResults < 1 || maxResults > SEARCH_MAX_RESULTS) {
-                throw new IllegalArgumentException("max search result");
-            }
-        } else {
-            maxResults = 50;
+                                       boolean isCaseSensitive,
+                                       boolean isExactMatch,
+                                       boolean recursive,
+                                       int maxResults) throws IOException {
+        if (maxResults < 1 || maxResults > SEARCH_MAX_RESULTS) {
+            throw new IllegalArgumentException("Max search result parameter should be positive and less then " +
+                                               SEARCH_MAX_RESULTS);
         }
-        if (skipSubfolders == null) {
-            skipSubfolders = false;
-        }
-        if (isCaseSensitive == null) {
-            isCaseSensitive = true;
-        }
-        if (isExactMatch == null) {
-            isExactMatch = false;
-        }
-
         Path absolutePath = getAbsolutePath(login, path);
         Map <Path, FileDto> searchResult;
-        if (skipSubfolders) {
-            searchResult = FSUtils.searchInsideDirectoryOnly(absolutePath,
-                                                             namePattern,
-                                                             isCaseSensitive,
-                                                             isExactMatch,
-                                                             maxResults);
-        } else {
+        if (recursive) {
             searchResult = FSUtils.searchRecursively(absolutePath,
-                                                     namePattern,
-                                                     isCaseSensitive,
-                                                     isExactMatch,
-                                                     maxResults);
+                    namePattern,
+                    isCaseSensitive,
+                    isExactMatch,
+                    maxResults);
+        } else {
+            searchResult = FSUtils.searchInsideDirectoryOnly(absolutePath,
+                    namePattern,
+                    isCaseSensitive,
+                    isExactMatch,
+                    maxResults);
         }
 
         Map <String, FileDto> results = new HashMap<>();
@@ -515,7 +491,7 @@ public class FilesService {
             fileDetails.setPath(getPathInsideUserHomeDirectory(Paths.get(fileDetails.getPath()), login));
             return fileDetails;
         }
-        throw new FileNotFoundException();
+        throw new FileNotFoundException("File '" + name + "' doesn't exist");
     }
 
     /**
