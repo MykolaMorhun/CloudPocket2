@@ -1,4 +1,4 @@
-package com.cloudpocket.model;
+package com.cloudpocket.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

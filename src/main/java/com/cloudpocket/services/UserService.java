@@ -1,7 +1,7 @@
 package com.cloudpocket.services;
 
 import com.cloudpocket.exceptions.UserAlreadyExistException;
-import com.cloudpocket.model.User;
+import com.cloudpocket.model.entity.User;
 import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.repository.UserRepository;
 

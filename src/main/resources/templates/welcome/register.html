@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <div th:if="${@cloudPocketOptions.isSelfRegistrationEnable()}">
+    <div th:if="${isSelfRegistrationAllowed}">
         <div class="container form" id="register_form">
             <form class="form-horizontal" role="form" method="POST">
                 <div class="form-group">
@@ -53,12 +53,12 @@
             </form>
         </div>
     </div>
-    <div th:unless="${@cloudPocketOptions.isSelfRegistrationEnable()}">
+    <div th:unless="${isSelfRegistrationAllowed}">
         <div class="center-block text-center info-text">
             <p>Self registration is locked by admin.</p>
             <p>
-                <span th:text="${@environment.getProperty('cloudpocket.users.selfregistration.message')}"></span>
-                <span th:text="${@environment.getProperty('cloudpocket.admin.email')}"></span>
+                <span th:text="${@environment.getProperty('cloudpocket.users.self_registration.message')}"></span>
+                <span th:text="${adminEmail}"></span>
             </p>
         </div>
     </div>

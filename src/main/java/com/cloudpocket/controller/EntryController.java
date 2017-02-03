@@ -1,13 +1,23 @@
 package com.cloudpocket.controller;
 
+import com.cloudpocket.services.CloudPocketOptionsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static com.cloudpocket.config.Properties.ADMIN_EMAIL_PROPERTY;
+import static com.cloudpocket.config.Properties.IS_SELF_REGISTRATION_ALLOWED_PROPERTY;
+import static com.cloudpocket.utils.Utils.firstIfNotNull;
+
 /**
- * Controller for public pages
+ * Controller for public pages.
  */
 @Controller
 public class EntryController {
+    @Autowired
+    private CloudPocketOptionsService optionsService;
+
     @RequestMapping("/")
     public String redirectToMainPage() {
         return "redirect:/home";
@@ -34,7 +44,11 @@ public class EntryController {
     }
 
     @RequestMapping("register")
-    public String getRegisterPage() {
+    public String getRegisterPage(Model model) {
+        model.addAttribute("isSelfRegistrationAllowed",
+                           firstIfNotNull(optionsService.getOption(IS_SELF_REGISTRATION_ALLOWED_PROPERTY), true));
+        model.addAttribute("adminEmail", optionsService.getOption(ADMIN_EMAIL_PROPERTY));
+
         return "welcome/register";
     }
 

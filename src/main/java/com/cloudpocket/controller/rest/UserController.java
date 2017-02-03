@@ -1,7 +1,7 @@
 package com.cloudpocket.controller.rest;
 
 import com.cloudpocket.exceptions.ForbiddenException;
-import com.cloudpocket.model.User;
+import com.cloudpocket.model.entity.User;
 import com.cloudpocket.model.dto.UserDto;
 import com.cloudpocket.services.UserService;
 import com.wordnik.swagger.annotations.Api;

@@ -1,6 +1,6 @@
 package com.cloudpocket.repository;
 
-import com.cloudpocket.model.User;
+import com.cloudpocket.model.entity.User;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

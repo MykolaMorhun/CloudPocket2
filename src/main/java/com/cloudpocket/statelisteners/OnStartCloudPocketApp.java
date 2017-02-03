@@ -1,5 +1,7 @@
 package com.cloudpocket.statelisteners;
 
+import com.cloudpocket.services.CloudPocketOptionsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -11,6 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.cloudpocket.config.Properties.ADMIN_EMAIL_PROPERTY;
+import static com.cloudpocket.config.Properties.IS_SELF_REGISTRATION_ALLOWED_PROPERTY;
+
 /**
  * Executes after application start.
  */
@@ -20,9 +25,18 @@ public class OnStartCloudPocketApp implements ApplicationListener<ApplicationRea
     @Value("${cloudpocket.storage}")
     private String PATH_TO_STORAGE;
 
+    @Value("${" + IS_SELF_REGISTRATION_ALLOWED_PROPERTY + "}")
+    private Boolean isSelfRegistrationAllowed;
+    @Value("${" + ADMIN_EMAIL_PROPERTY + "}")
+    private String cloudpocketAdminEmail;
+
+    @Autowired
+    private CloudPocketOptionsService optionsService;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         createAppRootDirectory();
+        setCloudPocketOptionsFromProperties();
     }
 
     /**
@@ -39,6 +53,20 @@ public class OnStartCloudPocketApp implements ApplicationListener<ApplicationRea
                                    "'. Cause: " + e.getMessage() + " Application will be terminated.");
                 System.exit(0);
             }
+        }
+    }
+
+    /**
+     * Sets the system global options from application.properties if they hasn't set yet.
+     */
+    private void setCloudPocketOptionsFromProperties() {
+        setCloudPocketOptionIfNotSet(IS_SELF_REGISTRATION_ALLOWED_PROPERTY, isSelfRegistrationAllowed.toString());
+        setCloudPocketOptionIfNotSet(ADMIN_EMAIL_PROPERTY, cloudpocketAdminEmail);
+    }
+
+    private void setCloudPocketOptionIfNotSet(String optionName, String optionValue) {
+        if (optionsService.getOption(optionName) == null) {
+            optionsService.addOption(optionName, optionValue);
         }
     }
 

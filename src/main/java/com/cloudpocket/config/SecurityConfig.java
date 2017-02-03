@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                com.cloudpocket.model.User user = userService.getUserByLogin(username);
+                com.cloudpocket.model.entity.User user = userService.getUserByLogin(username);
                 if (user != null) {
                     List<GrantedAuthority> roles;
                     if (user.isAdmin() || user.getId() == 1) {
