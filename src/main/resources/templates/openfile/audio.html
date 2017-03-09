@@ -2,8 +2,7 @@
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
 <head>
-    <title th:text="${fileInfo.filename + ' - Cloud Pocket'}">Welcome to Cloud Pocket</title>
-    <link rel="icon" type="image/png" th:href="@{/images/favlogo.png}" sizes="32x32"/>
+    <include th:replace="snippets/openfile_headinclude"/>
 
     <script th:src="@{/lib/jquery-2.2.2.min.js}"></script>
 

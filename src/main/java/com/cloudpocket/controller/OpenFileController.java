@@ -2,6 +2,7 @@ package com.cloudpocket.controller;
 
 import com.cloudpocket.model.dto.FileDto;
 import com.cloudpocket.services.FilesService;
+import com.cloudpocket.utils.SimpleUrlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,8 +42,11 @@ public class OpenFileController {
                            @RequestParam String filename,
                            @AuthenticationPrincipal UserDetails userDetails,
                            Model model) throws IOException {
+        String urlToOpen = new SimpleUrlBuilder("/api/files/download/file").withQueryParam("path", path)
+                                                                           .withQueryParam("file", filename)
+                                                                           .withQueryParam("inline", "true")
+                                                                           .build();
         FileDto fileInfo = filesService.getFileInfo(userDetails.getUsername(), path, filename);
-        String urlToOpen = "/api/files/download/file?path=" + path + "&file=" + filename + "&inline=true";
         model.addAttribute("fileInfo", fileInfo);
         model.addAttribute("path", path);
         model.addAttribute("urlToOpen", urlToOpen);

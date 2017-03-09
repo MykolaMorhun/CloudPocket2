@@ -9,7 +9,7 @@
 	<packaging>war</packaging>
 
 	<name>CloudPocket</name>
-	<description>Service for store your files</description>
+	<description>Service for storing your files</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

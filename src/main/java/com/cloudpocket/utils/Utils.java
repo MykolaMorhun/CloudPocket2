@@ -1,5 +1,7 @@
 package com.cloudpocket.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -48,6 +50,17 @@ public class Utils {
      */
     public static String getCurrentDateTime() {
         return DEFAULT_DATE_FORMAT.format(new Date());
+    }
+
+    /**
+     * Translates a string into application/x-www-form-urlencoded format using a UTF-8 encoding scheme.
+     */
+    public static String urlEncode(String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
     }
 
 }
