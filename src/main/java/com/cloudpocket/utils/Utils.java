@@ -43,7 +43,7 @@ public class Utils {
         return dateFormat.format(new Date());
     }
 
-    private static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");
+    private static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss");
     /**
      * The same as {@link #getCurrentDateTime(SimpleDateFormat)}, but uses predefined date format.
      * @return current date and time in format: <i>year-month-day hour-minute-second</i>

@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 import static com.cloudpocket.utils.Utils.firstIfNotNull;
 import static com.cloudpocket.utils.Utils.getCurrentDateTime;
+import static com.cloudpocket.utils.Utils.urlEncode;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -217,6 +219,7 @@ public class FilesController {
     public void downloadFile(@RequestParam(required = true) String path,
                              @RequestParam(required = true) String file,
                              @RequestParam(required = false) Boolean inline,
+                             @RequestHeader(value="User-Agent") String userAgent,
                              @AuthenticationPrincipal UserDetails userDetails,
                              HttpServletResponse response) throws IOException {
         Path pathToFile = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, file);
@@ -228,9 +231,11 @@ public class FilesController {
         }
         response.setContentType(Files.probeContentType(pathToFile));
         if (inline != Boolean.TRUE) {
-            response.setHeader("Content-disposition", "attachment; filename=\"" + pathToFile.getFileName() + "\"");
+            response.setHeader("Content-disposition", "attachment; " +
+                    getFileNameHeader(pathToFile.getFileName().toString(), userAgent));
         } else {
-            response.setHeader("Content-disposition", "inline; filename=\"" + pathToFile.getFileName() + "\"");
+            response.setHeader("Content-disposition", "inline; " +
+                    getFileNameHeader(pathToFile.getFileName().toString(), userAgent));
         }
         response.setContentLengthLong(Files.size(pathToFile));
         filesService.downloadFile(pathToFile, response.getOutputStream());
@@ -246,15 +251,18 @@ public class FilesController {
                     produces = APPLICATION_OCTET_STREAM_VALUE)
     public void downloadFilesInArchive(@RequestParam(required = true) String path,
                                        @RequestParam(required = true) String[] files,
+                                       @RequestHeader(value="User-Agent") String userAgent,
                                        @AuthenticationPrincipal UserDetails userDetails,
                                        HttpServletResponse response) throws IOException {
         String archiveName = getCurrentDateTime();
         Path absolutePath = filesService.getAbsolutePathToFile(userDetails.getUsername(), path, archiveName);
         response.setContentType("application/zip");
         if (files.length == 1) {
-            response.setHeader("Content-disposition", "attachment; filename=\"" + files[0] + ".zip\"");
+            response.setHeader("Content-disposition", "attachment; " +
+                    getFileNameHeader(files[0] + ".zip", userAgent));
         } else {
-            response.setHeader("Content-disposition", "attachment; filename=\"" + archiveName + ".zip\"");
+            response.setHeader("Content-disposition", "attachment; " +
+                    getFileNameHeader(archiveName + ".zip", userAgent));
         }
         try {
             filesService.createArchive(userDetails.getUsername(), path, files, archiveName, ArchiveType.ZIP);
@@ -350,6 +358,23 @@ public class FilesController {
                                                   @RequestParam(required = true) String name,
                                                   @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         return filesService.getDetailedFileInfo(userDetails.getUsername(), path, name);
+    }
+
+    /**
+     * Forms filename header for file to download.
+     *
+     * @param fileName
+     *         raw name of file which will be sent to user
+     * @param userAgent
+     *         user agent
+     * @return header value for filename
+     */
+    private String getFileNameHeader(String fileName, String userAgent) {
+        // return "filename=\"" + urlEncode(fileName) + "\"; filename*=\"UTF-8''" + urlEncode(fileName) + "\"";
+        if (userAgent.contains("Firefox")) {
+            return "filename*=\"UTF-8''" + urlEncode(fileName) + '\"';
+        }
+        return "filename=\"" + urlEncode(fileName) + '\"';
     }
 
 }
