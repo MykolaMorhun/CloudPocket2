@@ -22,7 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 
-        <cloudpocket.version>0.1.1</cloudpocket.version>
+        <cloudpocket.version>2.1.2</cloudpocket.version>
 	</properties>
 
 	<dependencies>
