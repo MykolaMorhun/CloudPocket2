@@ -173,7 +173,7 @@ function upload_file() {
     var filename;
     $('#upload_file_form').ajaxSubmit({
         beforeSend: function() {
-            filename = $('#file_input').val().split('[\\/]').pop();
+            filename = $('#file_input').val().split(/[\\/]/).pop();
             upload_file_popup_reset(filename);
         },
         uploadProgress: function(event, position, total, percentComplete) {
