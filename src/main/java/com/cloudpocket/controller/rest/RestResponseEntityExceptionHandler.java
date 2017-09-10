@@ -2,10 +2,10 @@ package com.cloudpocket.controller.rest;
 
 import com.cloudpocket.exceptions.BadRequestException;
 import com.cloudpocket.exceptions.ForbiddenException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.io.FileNotFoundException;
@@ -22,8 +22,7 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 /**
  * Exception handling controller for REST API
  */
-@RestController
-@ControllerAdvice(annotations = RestController.class)
+@RestControllerAdvice(annotations = RestController.class)
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(BAD_REQUEST)
