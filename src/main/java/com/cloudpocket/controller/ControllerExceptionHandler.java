@@ -1,35 +1,21 @@
 package com.cloudpocket.controller;
 
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.io.FileNotFoundException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
-@ControllerAdvice
-public class ControllerExceptionHandler {
+@Component
+public class ControllerExceptionHandler implements ErrorViewResolver {
 
-    @ExceptionHandler(FileNotFoundException.class)
-    public String handleFileNotFoundException(Model model, FileNotFoundException e) {
-        model.addAttribute("pageTitle", "Not Found");
-        model.addAttribute("statusCode", 404);
-        model.addAttribute("errorMsg", e.getMessage());
-        return "errors/error_template";
-    }
-
-    @ExceptionHandler(org.springframework.web.bind.MissingServletRequestParameterException.class)
-    public String handleMissingRequestParameter(Model model, Exception e) {
-        model.addAttribute("pageTitle", "Bad request");
-        model.addAttribute("statusCode", 400);
-        model.addAttribute("errorMsg", e.getMessage());
-        return "errors/error_template";
-    }
-
-    @ExceptionHandler(Exception.class)
-    public String otherException(Model model, Exception e) {
-        model.addAttribute("statusCode", 500);
-        model.addAttribute("errorMsg", e.getMessage());
-        return "errors/error_template";
+    @Override
+    public ModelAndView resolveErrorView(HttpServletRequest request,
+                                         HttpStatus status,
+                                         Map<String, Object> model) {
+        return new ModelAndView("errors/error_template", model);
     }
 
 }

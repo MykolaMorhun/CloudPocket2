@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.3.RELEASE</version>
+		<version>1.5.6.RELEASE</version>
 		<relativePath/>
 	</parent>
 
@@ -22,7 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 
-        <cloudpocket.version>2.1.3-SNAPSHOT</cloudpocket.version>
+        <cloudpocket.version>2.2.0-SNAPSHOT</cloudpocket.version>
 	</properties>
 
 	<dependencies>
@@ -99,9 +99,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                <finalName>myname</finalName>
+                    <finalName>CloudPocket-${cloudpocket.version}</finalName>
                 </configuration>
-            </plugin>
+			</plugin>
 		</plugins>
 	</build>
 
