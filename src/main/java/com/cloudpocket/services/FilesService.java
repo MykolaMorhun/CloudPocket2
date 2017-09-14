@@ -527,11 +527,11 @@ public class FilesService {
      *         if path exits from user's home directory. E.g. "userhome/../../"
      */
     private Path getAbsolutePath(String login, String path) throws FileNotFoundException {
-        Path absolutePath = pathInsideUserHomeDirectory(login, path);
-        if (! Files.exists(absolutePath)) {
+        Path absolutePathInUserHomeDir = pathInsideUserHomeDirectory(login, path);
+        if (! Files.exists(absolutePathInUserHomeDir)) {
             throw new FileNotFoundException("Wrong path");
         }
-        return absolutePath;
+        return absolutePathInUserHomeDir.toAbsolutePath();
     }
 
     /**
@@ -546,7 +546,7 @@ public class FilesService {
      * @return absolute path inside user's home directory
      */
     private String getPathInsideUserHomeDirectory(Path absolutePath, String login) {
-        return "/" + Paths.get(PATH_TO_STORAGE, login).relativize(absolutePath).toString();
+        return "/" + Paths.get(PATH_TO_STORAGE, login).toAbsolutePath().relativize(absolutePath).toString();
     }
 
     /**

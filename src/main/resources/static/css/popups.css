@@ -2,6 +2,7 @@
 /* notifications-popup */
 #notification-popup-container {
     border: none;
+    z-index: 50;
     text-align: left;
     position: fixed;
     bottom: 25px;

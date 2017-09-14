@@ -413,7 +413,14 @@ public class FSUtils {
         FileDetails fileDetails = new FileDetails();
         fileDetails.setName(file.getName());
         fileDetails.setPath(file.getAbsolutePath());
-        fileDetails.setSize(attrs.size());
+        if (attrs.isDirectory()) {
+            fileDetails.setSize(Files.walk(item)
+                                     .filter(p -> p.toFile().isFile())
+                                     .mapToLong(p -> p.toFile().length())
+                                     .sum());
+        } else {
+            fileDetails.setSize(attrs.size());
+        }
         fileDetails.setDirectory(attrs.isDirectory());
         fileDetails.setExecutable(file.canExecute());
         fileDetails.setHidden(file.isHidden());

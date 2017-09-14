@@ -44,31 +44,38 @@ function find_elements() {
 
     file_input = $('#file_input');
     check_all_button = $('#check-all');
+
+    files_context_menu = $('#files_context_menu');
 }
 
 function bind_events() {
     for (var order in files_orders) {
         if(!files_orders.hasOwnProperty(order)) continue;
-        files_orders[order].bind('click', changeFilesOrder);
+        files_orders[order].on('click', change_files_order);
     }
 
-    current_path_input.bind('keypress', function (event) {
+    current_path_input.on('keypress', function (event) {
         if(event.keyCode == 13) {
             on_go_path_button_click();
         }
     });
-    search_input.bind('keypress', function (event) {
+    search_input.on('keypress', function (event) {
         if(event.keyCode == 13) {
             on_search_button_click();
         }
     });
 
     file_input.on('change', upload_file);
-    check_all_button.bind('click', toggle_all_checkboxes);
+    check_all_button.on('click', toggle_all_checkboxes);
+
+    files_context_menu.on('mouseleave', hide_context_menu);
+    $.each(files_context_menu_items, function(key, value) {
+       value.on('click', hide_context_menu);
+    });
 }
 
 /*************************************/
-// file list event handlers and processors
+// files list event handlers and processors
 /*************************************/
 
 function update_files_list() {
@@ -89,16 +96,19 @@ function back_dir() {
 
 function view_item() {
     var row_id = $(this).parent().attr("id");
+    open_item(row_id);
+}
 
-    if (row_id === '..') {
+function open_item(item_id) {
+    if (item_id === '..') {
         back_dir();
         return;
     }
-    if (files_map[row_id].directory === true) {
-        app_state.current_path += row_id + '/';
+    if (files_map[item_id].directory === true) {
+        app_state.current_path += item_id + '/';
         update_files_list();
     } else {
-        view_file(row_id);
+        view_file(item_id);
     }
 }
 
@@ -149,7 +159,7 @@ function toggle_all_checkboxes() {
     }
 }
 
-function changeFilesOrder(elem) {
+function change_files_order(elem) {
     var newOrder = $(elem.target).attr('order');
     var oldOrder = app_state.files_order;
     if (newOrder === oldOrder) {
@@ -299,7 +309,11 @@ function on_rename_button_click() {
         alert('Select file to rename');
         return;
     }
-    var old_file_name = app_state.selected_files_list[0];
+    rename_item(app_state.selected_files_list[0]);
+}
+
+function rename_item(item_id) {
+    var old_file_name = item_id;
     var new_file_name = prompt("New file name:", old_file_name);
     if (new_file_name !== null && new_file_name != "" && new_file_name != old_file_name) {
         rename_file_request(rename_file_callback, app_state.current_path, old_file_name, new_file_name);
@@ -358,6 +372,65 @@ function on_go_path_button_click() {
 }
 
 /*************************************/
+// context menu handlers
+/*************************************/
+
+var files_context_menu;
+var context_menu_current_item_id;
+
+var show_context_menu = function(event) {
+    event.preventDefault();
+
+    context_menu_current_item_id = event.currentTarget.id;
+
+    files_context_menu.css('left', event.clientX - 1); // to move mouse pointer on context menu
+    files_context_menu.css('top', event.clientY - 1);
+
+    files_context_menu.fadeIn(200);
+};
+
+function hide_context_menu() {
+    files_context_menu.fadeOut(200);
+}
+
+function on_context_menu_open_click() {
+    open_item(context_menu_current_item_id);
+}
+
+function on_context_menu_edit_click() {
+  // TODO impl
+}
+
+function on_context_menu_download_click() {
+    if (files_map[context_menu_current_item_id].directory === false) {
+        download_file_request(download_file_callback, app_state.current_path, context_menu_current_item_id);
+    } else {
+        download_structure_request(download_structure_callback, app_state.current_path, [context_menu_current_item_id]);
+    }
+}
+
+function on_context_menu_delete_click() {
+    var confirmation = confirm('You want to delete "' + context_menu_current_item_id + '". Are you sure?');
+    if (confirmation) {
+        delete_request(function(data) { context_menu_delete_callback(data, context_menu_current_item_id) },
+                       app_state.current_path, [context_menu_current_item_id]);
+    }
+}
+
+function on_context_menu_rename_click() {
+    if (context_menu_current_item_id == '..') {
+      alert('Not allowed.');
+      return;
+    }
+
+    rename_item(context_menu_current_item_id);
+}
+
+function on_context_menu_details_click() {
+    get_detailed_file_info_request(get_detailed_file_info_callback, app_state.current_path, context_menu_current_item_id);
+}
+
+/*************************************/
 // server response handlers
 /*************************************/
 
@@ -384,14 +457,15 @@ function list_files_callback(data) {
     });
 
     // update binding
-    $('#files-explorer td.cell-filename').bind('click', view_item);
-    $('#files-explorer td.cell-type-image').bind('click', view_item);
-    $('#files-explorer input[type=checkbox]').bind('click', toggle_checkbox);
+    $('#files-explorer td.cell-filename').on('click', view_item);
+    $('#files-explorer td.cell-type-image').on('click', view_item);
+    $('#files-explorer input[type=checkbox]').on('click', toggle_checkbox);
+    $('#files-list > tr').on("contextmenu", show_context_menu);
 }
 
 function copy_files_callback(data) {
     if ('status' in data) {
-        alert('error while copying files');
+        alert('Error while copying files');
         return;
     }
     show_notification('Copied');
@@ -400,7 +474,7 @@ function copy_files_callback(data) {
 
 function move_files_callback(data) {
     if ('status' in data) {
-        alert('error while moving files');
+        alert('Error while moving files');
         return;
     }
     show_notification('Moved');
@@ -413,15 +487,23 @@ function download_structure_callback() { }
 
 function delete_callback(data) {
     if ('status' in data) {
-        alert('failed to delete files');
+        alert('Failed to delete files');
         return;
     }
     show_notification('Deleted');
     app_state.selected_files_list.forEach(function (item) {
-        var elem = document.getElementById(item);
-        elem.remove();
+        document.getElementById(item).remove();
     });
     app_state.selected_files_list = [];
+}
+
+function context_menu_delete_callback(data, item_id) {
+    if ('status' in data) {
+        alert('Failed to delete ' + item_id);
+        return;
+    }
+    show_notification('Deleted');
+    document.getElementById(item_id).remove();
 }
 
 function compress_files_callback(data) {
@@ -429,7 +511,7 @@ function compress_files_callback(data) {
         show_notification('Compressed');
         update_files_list();
     } else {
-        alert('failed to compress files');
+        alert('Failed to compress files');
     }
 }
 
@@ -438,7 +520,7 @@ function uncompress_files_callback(data) {
         show_notification('Extracted');
         update_files_list();
     } else {
-        alert('failed to uncompress archive');
+        alert('Failed to uncompress archive');
     }
 }
 
@@ -447,7 +529,7 @@ function rename_file_callback(data) {
         show_notification('Renamed');
         update_files_list();
     } else {
-        alert('failed to rename file');
+        alert('Failed to rename file');
     }
 }
 
@@ -490,10 +572,24 @@ function search_files_callback(data) {
     }
 
     // set binding
-    $('#files-explorer td.cell-filename').bind('click', view_file_directory);
-    $('#files-explorer td.cell-type-image').bind('click', view_file_directory);
+    $('#files-explorer td.cell-filename').on('click', view_file_directory);
+    $('#files-explorer td.cell-type-image').on('click', view_file_directory);
     
     $('div[class=squaredCheckbox]').remove();
+}
+
+function get_detailed_file_info_callback(data) {
+    if ('status' in data) {
+        alert('Error while getting file details.');
+        return;
+    }
+
+    var info = '';
+    for (var key in data) {
+        info += key + ': ' + data[key] + '\n';
+    }
+
+    alert(info);
 }
 
 function logout_callback() {

@@ -95,13 +95,6 @@
                     <finalName>CloudPocket-${cloudpocket.version}</finalName>
                 </configuration>
 			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <finalName>CloudPocket-${cloudpocket.version}</finalName>
-                </configuration>
-			</plugin>
 		</plugins>
 	</build>
 

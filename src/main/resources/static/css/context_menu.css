@@ -1,0 +1,34 @@
+#files_context_menu {
+  display: none;
+  z-index: 100;
+  position: absolute;
+  user-select: none;
+  background-color: #ddefff;
+
+  -moz-user-select: none;
+}
+
+.context_menu_item {
+  height: 32px;
+  padding-left: 1px;
+  padding-right: 4px;
+}
+
+.context_menu_item:hover {
+    background-color: #8888ff;
+}
+
+.context_menu_image {
+    width: 32px;
+    height: 32px;
+}
+
+.context_menu_item_label {
+    vertical-align: center;
+    color: #111;
+}
+
+.context_menu_separator {
+    margin: 2px;
+    border-color: #aaa;
+}

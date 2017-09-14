@@ -30,24 +30,27 @@ function unknown_extension(image) {
     return true;
 }
 
+var get_file_size = function() {
+    return get_convenient_file_size(this.size);
+}
+
 var kilobyte = 1024;
 var megabyte = kilobyte * 1024;
 var gigabyte = megabyte * 1024;
-var get_file_size = function() {
-    var file_size = this.size;
-    if (file_size < kilobyte) {
-        return file_size + ' B';
-    } else if (file_size < megabyte) {
-        return roundToHundredths(file_size / kilobyte) + ' KB';
-    } else if (file_size < gigabyte) {
-        return roundToHundredths(file_size / megabyte) + ' MB';
+function get_convenient_file_size(file_size_in_bytes) {
+    if (file_size_in_bytes < kilobyte) {
+        return file_size_in_bytes + ' B';
+    } else if (file_size_in_bytes < megabyte) {
+        return roundToHundredths(file_size_in_bytes / kilobyte) + ' KB';
+    } else if (file_size_in_bytes < gigabyte) {
+        return roundToHundredths(file_size_in_bytes / megabyte) + ' MB';
     } else {
-        return roundToHundredths(file_size / megabyte) + ' GB';
+        return roundToHundredths(file_size_in_bytes / megabyte) + ' GB';
     }
 };
 
 function roundToHundredths(number) {
-    return  Math.round(number * 100) / 100;
+    return Math.round(number * 100) / 100;
 }
 
 function get_file_upload_form_template() {

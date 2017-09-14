@@ -183,6 +183,23 @@ function search_files_request(callback, path, pattern) {
     });
 }
 
+function get_detailed_file_info_request(callback, path, name) {
+    $.ajax({
+        url: '/api/files/info',
+        data: {
+            path: path,
+            name: name
+        },
+        type: 'GET',
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            callback(response);
+        }
+    });
+}
+
 function logout_request(callback) {
     $.get("/logout", function(response) {
         callback(response)
