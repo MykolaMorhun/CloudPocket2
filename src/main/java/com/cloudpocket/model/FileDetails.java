@@ -1,5 +1,7 @@
 package com.cloudpocket.model;
 
+import static com.cloudpocket.utils.Utils.stringDateTime;
+
 /**
  * Contains detailed information about a file or directory.
  */
@@ -11,9 +13,12 @@ public class FileDetails {
     private Boolean directory;
     private Boolean executable;
     private Boolean hidden;
-    private Long created;
-    private Long modified;
-    private Long accessed;
+    private Long createdLong;
+    private String created;
+    private Long modifiedLong;
+    private String modified;
+    private Long accessedLong;
+    private String accessed;
     private String owner;
     private String contentType;
 
@@ -65,28 +70,43 @@ public class FileDetails {
         this.hidden = hidden;
     }
 
-    public Long getCreated() {
-        return created;
+    public Long getCreatedLong() {
+        return createdLong;
     }
 
     public void setCreated(long created) {
-        this.created = created;
+        this.createdLong = created;
+        this.created = stringDateTime(created);
     }
 
-    public Long getModified() {
-        return modified;
+    public String getCreated() {
+        return created;
+    }
+
+    public Long getModifiedLong() {
+        return modifiedLong;
     }
 
     public void setModified(long modified) {
-        this.modified = modified;
+        this.modifiedLong = modified;
+        this.modified = stringDateTime(modified);
     }
 
-    public Long getAccessed() {
-        return accessed;
+    public String getModified() {
+        return modified;
+    }
+
+    public Long getAccessedLong() {
+        return accessedLong;
     }
 
     public void setAccessed(long accessed) {
-        this.accessed = accessed;
+        this.accessedLong = accessed;
+        this.accessed = stringDateTime(accessed);
+    }
+
+    public String getAccessed() {
+        return accessed;
     }
 
     public String getOwner() {

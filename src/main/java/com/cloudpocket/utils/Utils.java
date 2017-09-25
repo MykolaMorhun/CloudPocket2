@@ -63,4 +63,15 @@ public class Utils {
         }
     }
 
+    private static final SimpleDateFormat FILE_DATE_TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    /**
+     * Converts date and time from long to string representation for file attributes.
+     *
+     * @param value date and time in long representation
+     * @return given date and time in string format
+     */
+    public static String stringDateTime(long value) {
+        return FILE_DATE_TIME_FORMAT.format(new Date(value));
+    }
+
 }

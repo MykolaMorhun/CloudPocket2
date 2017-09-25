@@ -1,7 +1,6 @@
 package com.cloudpocket.model.dto;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static com.cloudpocket.utils.Utils.stringDateTime;
 
 /**
  * Object for transfer data about file.
@@ -23,8 +22,6 @@ public class FileDto {
     /** creation date in long format */
     private long creationDateLong;
 
-    private static final SimpleDateFormat FILE_CREATION_DATE_TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-
     public FileDto(String name, boolean directory, long size, long creationDate) {
         this.filename = name;
         if (!directory) {
@@ -40,7 +37,7 @@ public class FileDto {
         this.directory = directory;
         this.size = size;
         this.creationDateLong = creationDate;
-        this.creationDate = FILE_CREATION_DATE_TIME_FORMAT.format(new Date(creationDate));
+        this.creationDate = stringDateTime(creationDate);
     }
 
     public String getFilename() {
