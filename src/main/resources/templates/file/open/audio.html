@@ -2,14 +2,14 @@
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
 <head>
-    <include th:replace="snippets/openfile_headinclude"/>
+    <include th:replace="snippets/file/open/headinclude"/>
 
     <script th:src="@{/lib/jquery-2.2.2.min.js}"></script>
 
     <script src="/lib/johndyer-mediaelement/mediaelement-and-player.min.js"></script>
     <link rel="stylesheet" href="/lib/johndyer-mediaelement/mediaelementplayer.min.css" />
 
-    <link rel="stylesheet" href="/css/openfile/audio.css" />
+    <link rel="stylesheet" href="/css/file/open/audio.css" />
 </head>
 <body>
     <div id="track_name" th:text="${fileInfo.filename}">Track name</div>

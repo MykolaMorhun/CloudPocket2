@@ -113,7 +113,15 @@ function open_item(item_id) {
 }
 
 function view_file(filename) {
-    var url = '/open/file?';
+    var url = '/file/open?';
+    url += 'path=' + app_state.current_path;
+    url += '&';
+    url += 'filename=' + filename;
+    window.open(url,'_blank');
+}
+
+function edit_file(filename) {
+    var url = '/file/edit?';
     url += 'path=' + app_state.current_path;
     url += '&';
     url += 'filename=' + filename;
@@ -398,7 +406,11 @@ function on_context_menu_open_click() {
 }
 
 function on_context_menu_edit_click() {
-  // TODO impl
+    if (files_map[context_menu_current_item_id].directory === false) {
+        edit_file(context_menu_current_item_id);
+    } else {
+        alert('Cannot edit a directory.');
+    }
 }
 
 function on_context_menu_download_click() {

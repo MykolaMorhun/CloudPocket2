@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <include th:replace="snippets/file/open/headinclude"/>
+
+    <script th:src="@{/lib/jquery-2.2.2.min.js}"></script>
+    <script th:src="@{/lib/url-params.js}"></script>
+    <script th:src="@{/scripts/app/file/edit/text.js}"></script>
+
+    <script th:src="@{/scripts/app/popups.js}"></script>
+
+    <link th:href="@{/css/file/edit/text.css}" rel="stylesheet"/>
+
+</head>
+<body>
+    <div id="status-bar">
+        <span id="file-name"></span>
+    </div>
+    <textarea id="file-content"></textarea>
+    <div id="controls">
+        <button class="control-button" id="save">Save</button>
+        <button class="control-button" id="discard">Discard</button>
+    </div>
+
+    <div th:replace="snippets/popups :: notification_popups"></div>
+</body>
+</html>

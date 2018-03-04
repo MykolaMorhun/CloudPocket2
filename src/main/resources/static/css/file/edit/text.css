@@ -1,0 +1,49 @@
+
+body {
+    background-color: #555753;
+}
+
+#status-bar {
+    text-align: center;
+    color: rgb(69, 69, 245);
+    text-shadow: 0 0 10px blue;
+    margin-bottom: 5px;
+}
+
+#file-content {
+    width: 100%;
+    height: 80%;
+
+    font-family: 'monospace';
+    font-size: 14px;
+
+    background-color: #F5F5CC;
+}
+
+#controls {
+    margin: 0 auto;
+    padding-top: 5px;
+}
+
+.control-button {
+    width: 120px;
+    height: 30px;
+
+    color: white;
+
+    padding: 2px 4px;
+    border: 0px;
+    border-radius: 5px;
+}
+
+.control-button:hover {
+    filter: brightness(95%);
+}
+
+#save {
+    background-color: #337AA7;
+}
+
+#discard {
+    background-color: #EC9713;
+}

@@ -6,19 +6,16 @@
 <body>
     <div th:fragment="file_context_menu">
         <link th:href="@{/css/context_menu.css}" rel="stylesheet"/>
-        <script th:src="@{/scripts/app/popups.js}"></script>
 
         <div id="files_context_menu">
             <div id="files-context-menu-open" class="context_menu_item">
                 <img src="/images/buttons/open.png" class="context_menu_image"/>
                 <span class="context_menu_item_label">Open</span>
             </div>
-            <!--
             <div id="files-context-menu-edit" class="context_menu_item">
                 <img src="/images/buttons/edit.png" class="context_menu_image"/>
                 <span class="context_menu_item_label">Edit</span>
             </div>
-            -->
             <hr class="context_menu_separator"/>
             <div id="files-context-menu-download" class="context_menu_item">
                 <img src="/images/buttons/download.png" class="context_menu_image"/>
