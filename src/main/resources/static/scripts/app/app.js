@@ -391,8 +391,8 @@ var show_context_menu = function(event) {
 
     context_menu_current_item_id = event.currentTarget.id;
 
-    files_context_menu.css('left', event.clientX - 1); // to move mouse pointer on context menu
-    files_context_menu.css('top', event.clientY - 1);
+    files_context_menu.css('left', event.pageX - 1); // -1 to have mouse pointer over context menu
+    files_context_menu.css('top', event.pageY - 1);
 
     files_context_menu.fadeIn(200);
 };
