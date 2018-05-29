@@ -4,6 +4,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,11 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @Configuration
 @ComponentScan("com.cloudpocket")
 public class AppConfiguration {
+
+    @Value("${server.http.port}")
+    private Integer httpConnectorPort;
+    @Value("${server.http.port.redirect}")
+    private Integer httpRedirectToPort;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
@@ -41,9 +47,9 @@ public class AppConfiguration {
     private Connector redirectToHttpsConnector() {
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setScheme("http");
-        connector.setPort(8080);
+        connector.setPort(httpConnectorPort);
         connector.setSecure(false);
-        connector.setRedirectPort(8443);
+        connector.setRedirectPort(httpRedirectToPort);
         return connector;
     }
 
