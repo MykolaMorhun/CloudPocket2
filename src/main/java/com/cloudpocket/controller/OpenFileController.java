@@ -42,11 +42,13 @@ public class OpenFileController {
             return "redirect:" + urlToOpen;
         } else if (IMAGES.contains(fileExt)) {
             return "file/open/image";
-        } else if (SOURCE_CODE.contains(fileExt)) {
-            return "file/open/sourcecode";
         } else if (AUDIO.contains(fileExt)) {
             return "file/open/audio";
             //return "redirect:" + urlToOpen;
+        } else if (SOURCE_CODE.contains(fileExt)) {
+            return "file/open/sourcecode";
+        } else if (LINK.contains(fileExt)) {
+            return "file/open/link";
         } else {
             // hope, that user's browser is smart
             return "redirect:" + urlToOpen;
@@ -68,7 +70,7 @@ public class OpenFileController {
         model.addAttribute("urlToOpen", urlToOpen);
 
         String fileExt = fileInfo.getExtension();
-        if (PLAIN_TEXT.contains(fileExt) || SOURCE_CODE.contains(fileExt)) {
+        if (PLAIN_TEXT.contains(fileExt) || SOURCE_CODE.contains(fileExt) || LINK.contains(fileExt)) {
             return "file/edit/text";
         } else {
             // editing of this file type is not supported

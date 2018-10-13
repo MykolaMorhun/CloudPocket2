@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <include th:replace="snippets/file/open/headinclude"/>
+
+    <script th:src="@{/lib/jquery-2.2.2.min.js}"></script>
+    <script th:src="@{/lib/url-params.js}"></script>
+</head>
+<body>
+    <p id="message">Redirecting</p>
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            var path = getUrlParameter('path');
+            var filename = getUrlParameter('filename');
+            var messageBox = $('#message');
+            messageBox.text("Redirecting to link from: " + path + filename);
+
+            $.ajax({
+                url: /*[[${urlToOpen}]]*/,
+                success: function(text) {
+                    targetUrl = text.trim();
+                    messageBox.text("Redirecting to: " + targetUrl);
+                    location.replace(targetUrl);
+                },
+                error: function() {
+                    messageBox.text('Failed to get link from: ' + path + filename);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

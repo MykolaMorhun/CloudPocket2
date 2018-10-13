@@ -1,6 +1,6 @@
 
 var path;
-var file;
+var filename;
 var downloadFileUri;
 var uploadFileUrl;
 

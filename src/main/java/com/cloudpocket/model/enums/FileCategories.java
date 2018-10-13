@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public interface FileCategories {
     Set<String> PLAIN_TEXT = new HashSet<>(Arrays.asList(
-            "txt","log"
+            "txt","log", "ascii"
     ));
     Set<String> SOURCE_CODE = new HashSet<>(Arrays.asList(
             "c","cpp","h","java","pas","js","php","py","pl","scala","sql","css","html","xml","sh"
@@ -22,5 +22,8 @@ public interface FileCategories {
     ));
     Set<String> VIDEO = new HashSet<>(Arrays.asList(
             "mpeg","mpg","mp4","avi","mkv","flv","webm","mov","wmv","3gp"
+    ));
+    Set<String> LINK = new HashSet<>(Arrays.asList(
+            "url", "uri"
     ));
 }
